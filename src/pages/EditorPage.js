@@ -6,10 +6,9 @@ import Editor from "../components/Editor";
 import { initSocket } from "../socket";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
-import { io } from "socket.io-client";
 import debounce from "lodash.debounce";
 
-const socket = io('http://localhost:5002');
+const SERVER_URL = "https://real-time-collaborative-code-editor-hpju.onrender.com";
 
 const EditorPage = () => {
   const socketRef = useRef(null);
@@ -31,22 +30,21 @@ const EditorPage = () => {
 
     const init = async () => {
       try {
-        socketRef.current = await initSocket();
+        socketRef.current = await initSocket(SERVER_URL);  // Pass server URL
         socketRef.current.on("connect_error", handleErrors);
         socketRef.current.on("connect_failed", handleErrors);
 
         function handleErrors(e) {
-          console.log("Socket error:", e);
+          console.error("Socket error:", e);
           toast.error("Socket connection failed, try again later");
           reactNavigator("/");
         }
 
         socketRef.current.emit(ACTIONS.JOIN, { roomId, username });
 
-        socketRef.current.on(ACTIONS.JOINED, ({ clients, username, socketId }) => {
-          if (username !== location.state?.username) {
-            toast.success(`${username} joined the Room`);
-            console.log(`${username} Joined`);
+        socketRef.current.on(ACTIONS.JOINED, ({ clients, username: joinedUser, socketId }) => {
+          if (joinedUser !== location.state?.username) {
+            toast.success(`${joinedUser} joined the Room`);
           }
           setClients(clients);
           socketRef.current.emit(ACTIONS.SYNC_CODE, {
@@ -107,7 +105,7 @@ const EditorPage = () => {
     }
 
     try {
-      const { data } = await axios.post("http://localhost:5002/execute", {
+      const { data } = await axios.post(`${SERVER_URL}/execute`, {
         code: codeRef.current,
       });
       setOutput(data.output);
