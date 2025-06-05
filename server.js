@@ -15,7 +15,7 @@ const server = http.createServer(app);
 // Allow both local dev and deployed frontend origin
 const allowedOrigins = [
   'http://localhost:3000',
-  'https://real-time-collaborative-code-editor.vercel.app', // ← replace with your actual frontend domain
+  'https://real-time-collaborative-code-editor-nine.vercel.app/', // ← replace with your actual frontend domain
 ];
 
 const io = new Server(server, {
