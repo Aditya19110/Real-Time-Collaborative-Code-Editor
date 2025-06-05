@@ -12,33 +12,34 @@ const path = require('path');
 // Create HTTP server
 const server = http.createServer(app);
 
-// Allow both local dev and deployed frontend origin
-const allowedOrigins = [
-  'http://localhost:3000',
-  'https://real-time-collaborative-code-editor-nine.vercel.app/', // ← replace with your actual frontend domain
-];
+// Replace this with your actual Vercel frontend domain
+const FRONTEND_ORIGIN = process.env.FRONTEND_ORIGIN || 'https://real-time-collaborative-code-editor-nine.vercel.app/';
 
+// Initialize Socket.io server with CORS
 const io = new Server(server, {
   cors: {
-    origin: allowedOrigins,
+    origin: FRONTEND_ORIGIN,
     methods: ['GET', 'POST'],
     allowedHeaders: ['Content-Type'],
+    credentials: true,
   },
 });
 
-const userSocketMap = {};
-const roomUsernamesMap = {};
-const roomCodeMap = {};
-
+// Express CORS Middleware
 app.use(cors({
-  origin: allowedOrigins,
+  origin: FRONTEND_ORIGIN,
   methods: ['GET', 'POST'],
   allowedHeaders: ['Content-Type'],
+  credentials: true,
 }));
 
 app.use(bodyParser.json());
 
-// Helper: Get connected clients in a room
+// Socket mappings
+const userSocketMap = {};
+const roomUsernamesMap = {};
+const roomCodeMap = {};
+
 function getAllConnectedClients(roomId) {
   return Array.from(io.sockets.adapter.rooms.get(roomId) || []).map((socketId) => ({
     socketId,
@@ -46,12 +47,15 @@ function getAllConnectedClients(roomId) {
   }));
 }
 
-// Socket.io Handling
+// Socket.io Events
 io.on('connection', (socket) => {
-  console.log('Socket connected:', socket.id);
+  console.log('Socket connected', socket.id);
 
   socket.on(ACTIONS.JOIN, ({ roomId, username }) => {
+    console.log(`Attempting to join room: ${roomId} with username: ${username}`);
+
     if (roomUsernamesMap[roomId]?.includes(username)) {
+      console.log(`${username} is already in the room ${roomId}`);
       socket.emit(ACTIONS.ERROR, { message: `${username} is already in the room` });
       return;
     }
@@ -59,12 +63,12 @@ io.on('connection', (socket) => {
     userSocketMap[socket.id] = username;
     roomUsernamesMap[roomId] = roomUsernamesMap[roomId] || [];
     roomUsernamesMap[roomId].push(username);
-
     socket.join(roomId);
+
+    console.log(`User ${username} joined room ${roomId}`);
 
     const clients = getAllConnectedClients(roomId);
 
-    // Sync latest code
     if (roomCodeMap[roomId]) {
       socket.emit(ACTIONS.CODE_CHANGE, { code: roomCodeMap[roomId] });
     }
@@ -77,11 +81,13 @@ io.on('connection', (socket) => {
   });
 
   socket.on(ACTIONS.CODE_CHANGE, ({ roomId, code }) => {
+    console.log(`Code change detected in room ${roomId}`);
     roomCodeMap[roomId] = code;
     socket.in(roomId).emit(ACTIONS.CODE_CHANGE, { code });
   });
 
   socket.on(ACTIONS.SYNC_CODE, ({ socketId, code }) => {
+    console.log(`Syncing code to socket ${socketId}`);
     io.to(socketId).emit(ACTIONS.CODE_CHANGE, { code });
   });
 
@@ -96,16 +102,17 @@ io.on('connection', (socket) => {
 
       if (roomUsernamesMap[roomId]) {
         roomUsernamesMap[roomId] = roomUsernamesMap[roomId].filter(
-          (username) => username !== userSocketMap[socket.id]
+          (u) => u !== userSocketMap[socket.id]
         );
       }
     });
 
     delete userSocketMap[socket.id];
+    socket.leave();
   });
 });
 
-// Python Code Execution Endpoint
+// Code execution endpoint
 app.post('/execute', (req, res) => {
   const { code } = req.body;
 
@@ -113,34 +120,38 @@ app.post('/execute', (req, res) => {
     return res.status(400).json({ error: 'Invalid code input' });
   }
 
-  const safeCode = code.replace(/([`;$|&])/g, '');
+  const safeCode = code.replace(/[`;$|&{}]/g, '');
   const fileName = `${Date.now()}.py`;
   const tempDir = path.join(__dirname, 'temp');
+
+  if (!fs.existsSync(tempDir)) {
+    fs.mkdirSync(tempDir);
+  }
+
   const filePath = path.join(tempDir, fileName);
 
-  if (!fs.existsSync(tempDir)) fs.mkdirSync(tempDir);
-
   fs.writeFile(filePath, safeCode, (err) => {
-    if (err) return res.status(500).json({ error: 'Failed to write code to file' });
+    if (err) {
+      return res.status(500).json({ error: 'Failed to write code to file' });
+    }
 
     exec(`python3 "${filePath}"`, (error, stdout, stderr) => {
-      fs.unlink(filePath, (delErr) => {
-        if (delErr) console.error('Error deleting temp file:', delErr);
-      });
-
       if (error || stderr) {
-        return res.status(400).json({ error: stderr || error.message });
+        res.status(400).json({ error: stderr || error.message });
+        return;
       }
 
       res.json({ output: stdout });
+
+      fs.unlink(filePath, (err) => {
+        if (err) console.error('Error deleting temp file:', err);
+      });
     });
   });
 });
 
-// Optional: Health check route for Render
-app.get('/', (req, res) => {
-  res.send('Echo Code backend is live 🎉');
-});
-
+// Start Server
 const PORT = process.env.PORT || 5002;
-server.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+server.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+});
