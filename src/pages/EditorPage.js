@@ -20,6 +20,7 @@ const EditorPage = () => {
   const [output, setOutput] = useState("");
   const [username, setUsername] = useState(location.state?.username || '');
   const [code, setCode] = useState("");
+  const pingIntervalRef = useRef(null);
 
   useEffect(() => {
     if (!username) {
@@ -30,9 +31,12 @@ const EditorPage = () => {
 
     const init = async () => {
       try {
-        socketRef.current = await initSocket(SERVER_URL);  // Pass server URL
-        socketRef.current.on("connect_error", handleErrors);
-        socketRef.current.on("connect_failed", handleErrors);
+        socketRef.current = await initSocket(SERVER_URL);
+
+        const socket = socketRef.current;
+
+        socket.on("connect_error", handleErrors);
+        socket.on("connect_failed", handleErrors);
 
         function handleErrors(e) {
           console.error("Socket error:", e);
@@ -40,28 +44,38 @@ const EditorPage = () => {
           reactNavigator("/");
         }
 
-        socketRef.current.emit(ACTIONS.JOIN, { roomId, username });
+        socket.emit(ACTIONS.JOIN, { roomId, username });
 
-        socketRef.current.on(ACTIONS.JOINED, ({ clients, username: joinedUser, socketId }) => {
-          if (joinedUser !== location.state?.username) {
-            toast.success(`${joinedUser} joined the Room`);
+        socket.on(ACTIONS.JOINED, ({ clients, username: joinedUser, socketId }) => {
+          if (joinedUser !== username) {
+            toast.success(`${joinedUser} joined the room`);
           }
           setClients(clients);
-          socketRef.current.emit(ACTIONS.SYNC_CODE, {
+          socket.emit(ACTIONS.SYNC_CODE, {
             code: codeRef.current,
             socketId,
           });
         });
 
-        socketRef.current.on(ACTIONS.CODE_CHANGE, ({ code }) => {
+        socket.on(ACTIONS.CODE_CHANGE, ({ code }) => {
           codeRef.current = code;
           setCode(code);
         });
 
-        socketRef.current.on(ACTIONS.DISCONNECTED, ({ socketId, username }) => {
+        socket.on(ACTIONS.DISCONNECTED, ({ socketId, username }) => {
           toast.success(`${username} left the room`);
           setClients((prev) => prev.filter((client) => client.socketId !== socketId));
         });
+
+        // 🔁 Heartbeat mechanism
+        socket.on("pong", () => {
+          console.log("✅ Pong received from server");
+        });
+
+        pingIntervalRef.current = setInterval(() => {
+          socket.emit("ping");
+        }, 10000);
+
       } catch (error) {
         console.error("Socket initialization failed:", error);
         toast.error("Socket connection failed, try again later");
@@ -79,6 +93,11 @@ const EditorPage = () => {
         socketRef.current.off(ACTIONS.CODE_CHANGE);
         socketRef.current.off("connect_error");
         socketRef.current.off("connect_failed");
+        socketRef.current.off("pong");
+      }
+
+      if (pingIntervalRef.current) {
+        clearInterval(pingIntervalRef.current);
       }
     };
   }, [roomId, username, reactNavigator]);
@@ -122,9 +141,13 @@ const EditorPage = () => {
     if (file) {
       const reader = new FileReader();
       reader.onload = (e) => {
-        setCode(e.target.result);
-        codeRef.current = e.target.result;
-        socketRef.current.emit(ACTIONS.CODE_CHANGE, { roomId, code: e.target.result });
+        const fileContent = e.target.result;
+        setCode(fileContent);
+        codeRef.current = fileContent;
+        socketRef.current?.emit(ACTIONS.CODE_CHANGE, {
+          roomId,
+          code: fileContent,
+        });
       };
       reader.readAsText(file);
     }
@@ -144,7 +167,10 @@ const EditorPage = () => {
     debounce((newCode) => {
       setCode(newCode);
       codeRef.current = newCode;
-      socketRef.current.emit(ACTIONS.CODE_CHANGE, { roomId, code: newCode });
+      socketRef.current?.emit(ACTIONS.CODE_CHANGE, {
+        roomId,
+        code: newCode,
+      });
     }, 300),
     [roomId]
   );
@@ -169,6 +195,7 @@ const EditorPage = () => {
         <input type="file" onChange={handleFileUpload} />
         <button className="btn saveBtn" onClick={saveCodeToFile}>Save Code</button>
       </div>
+
       <div className="editorWrap">
         <Editor
           socketRef={socketRef}
@@ -177,6 +204,7 @@ const EditorPage = () => {
           onCodeChange={debouncedCodeChange}
         />
       </div>
+
       <div className="outputWrap">
         <h3>Output:</h3>
         <pre className="output">{output || "No output yet"}</pre>

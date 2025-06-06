@@ -12,11 +12,11 @@ const path = require('path');
 // Create HTTP server
 const server = http.createServer(app);
 
-// ✅ Correct FRONTEND_ORIGIN (NO trailing slash)
+// ✅ FRONTEND ORIGIN (no trailing slash)
 const FRONTEND_ORIGIN =
   process.env.FRONTEND_ORIGIN || 'https://real-time-collaborative-code-editor-nine.vercel.app';
 
-// Initialize Socket.io server with CORS config
+// Initialize Socket.io
 const io = new Server(server, {
   cors: {
     origin: FRONTEND_ORIGIN,
@@ -26,7 +26,7 @@ const io = new Server(server, {
   },
 });
 
-// Express CORS middleware
+// Enable CORS for Express
 app.use(
   cors({
     origin: FRONTEND_ORIGIN,
@@ -35,10 +35,9 @@ app.use(
     credentials: true,
   })
 );
-
 app.use(bodyParser.json());
 
-// Maps to track room-user-code info
+// Room tracking maps
 const userSocketMap = {};
 const roomUsernamesMap = {};
 const roomCodeMap = {};
@@ -50,10 +49,11 @@ function getAllConnectedClients(roomId) {
   }));
 }
 
-// Socket.io Events
+// 🧠 Socket.IO Connection
 io.on('connection', (socket) => {
   console.log('✅ Socket connected:', socket.id);
 
+  // ➕ Join Room
   socket.on(ACTIONS.JOIN, ({ roomId, username }) => {
     console.log(`➡️  ${username} joining room ${roomId}`);
 
@@ -69,6 +69,7 @@ io.on('connection', (socket) => {
 
     const clients = getAllConnectedClients(roomId);
 
+    // Sync existing code to new client
     if (roomCodeMap[roomId]) {
       socket.emit(ACTIONS.CODE_CHANGE, { code: roomCodeMap[roomId] });
     }
@@ -80,15 +81,23 @@ io.on('connection', (socket) => {
     });
   });
 
+  // 🔁 Handle code change
   socket.on(ACTIONS.CODE_CHANGE, ({ roomId, code }) => {
     roomCodeMap[roomId] = code;
     socket.in(roomId).emit(ACTIONS.CODE_CHANGE, { code });
   });
 
+  // 🔄 Handle sync request
   socket.on(ACTIONS.SYNC_CODE, ({ socketId, code }) => {
     io.to(socketId).emit(ACTIONS.CODE_CHANGE, { code });
   });
 
+  // ❤️ Ping-Pong heartbeat
+  socket.on('ping', () => {
+    socket.emit('pong');
+  });
+
+  // 🔌 Handle disconnect
   socket.on('disconnecting', () => {
     const rooms = [...socket.rooms];
 
@@ -110,7 +119,7 @@ io.on('connection', (socket) => {
   });
 });
 
-// Code Execution API
+// 🧪 Code Execution Endpoint
 app.post('/execute', (req, res) => {
   const { code } = req.body;
 
@@ -145,7 +154,7 @@ app.post('/execute', (req, res) => {
   });
 });
 
-// ✅ Start Server (bind to 0.0.0.0 for Render compatibility)
+// ✅ Start server (compatible with Render)
 const PORT = process.env.PORT || 5002;
 server.listen(PORT, '0.0.0.0', () => {
   console.log(`🚀 Server running on port ${PORT}`);
