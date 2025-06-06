@@ -8,28 +8,24 @@ const Home = () => {
   const [roomId, setRoomId] = useState('');
   const [username, setUsername] = useState('');
 
-  // Function to create a new room with a random Room ID
   const createNewRoom = (e) => {
     e.preventDefault();
     const id = uuidv4();
     setRoomId(id);
-    setUsername(''); // Clear the username field when creating a new room
+    setUsername('');
     toast.success('Created The Room!');
   };
 
-  // Function to join an existing room
   const joinRoom = () => {
     if (!roomId || !username) {
       toast.error('Please enter both Room ID and Username');
       return;
     }
-    // Redirect to the editor page with the room ID and username
     navigate(`/editor/${roomId}`, {
       state: { username },
     });
   };
 
-  // Handle pressing "Enter" key to join the room
   const handleInputEnter = (e) => {
     if (e.code === 'Enter') {
       joinRoom();
@@ -62,13 +58,13 @@ const Home = () => {
             onChange={(e) => setUsername(e.target.value)}
             onKeyUp={handleInputEnter}
           />
-          <button onClick={joinRoom} className="btn joinBtn">
-            Join Now
+          <button onClick={joinRoom} className="btn joinBtn enhancedBtn">
+            🚀 Join Now
           </button>
           <span className="createInfo">
             Create your own &nbsp;
-            <button onClick={createNewRoom} className="createNewBtn">
-              Room Id
+            <button onClick={createNewRoom} className="createNewBtn enhancedBtn smallBtn">
+              ➕ Room Id
             </button>
           </span>
         </div>

@@ -135,3 +135,32 @@ footer {
   line-height: 1.6;
   padding-top: 20px;
 }
+.enhancedBtn {
+  background-color: #4BA3C7;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 12px 20px;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  transition: all 0.3s ease;
+}
+
+.enhancedBtn:hover {
+  background-color: #3E8BAA;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.25);
+}
+
+.enhancedBtn:active {
+  transform: scale(0.98);
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2);
+}
+
+.smallBtn {
+  padding: 6px 12px;
+  font-size: 14px;
+  border-radius: 6px;
+}
