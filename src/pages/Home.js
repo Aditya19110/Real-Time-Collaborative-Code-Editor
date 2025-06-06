@@ -63,7 +63,7 @@ const Home = () => {
           </button>
           <span className="createInfo">
             Create your own &nbsp;
-            <button onClick={createNewRoom} className="createNewBtn enhancedBtn smallBtn">
+            <button onClick={createNewRoom} className="createNewBtn enhancedBtn joinBtn">
               ➕ Room Id
             </button>
           </span>
