@@ -33,31 +33,46 @@ const Home = () => {
   };
 
   return (
-   <div className="homePageWrapper">
-  <div className="formWrapper">
-    <h1 style={{ textAlign: "center", margin: "0" }}>
-      <span style={{ fontFamily: "cursive", fontSize: "24px", color: "#00897B" }}>Code</span><br />
-      <span style={{ fontWeight: "bold", fontSize: "32px", color: "#EF6C00" }}>TOGETHER</span>
-    </h1>
-
-    <p className="mainLabel">Paste your room id</p>
-
-    <div className="inputGroup">
-      <input type="text" className="inputBox" placeholder="Enter Room Id" />
-      <input type="text" className="inputBox" placeholder="Enter Name" />
-      <button className="btn joinBtn">Join Now</button>
+    <div className="homePageWrapper">
+      <div className="formWrapper">
+        <img
+          className="homePageLogo"
+          src="/code-together.png"
+          alt="code-together"
+        />
+        <h4 className="mainLabel">Paste your room id</h4>
+        <div className="inputGroup">
+          <input
+            type="text"
+            className="inputBox"
+            placeholder="Enter Room Id"
+            value={roomId}
+            onChange={(e) => setRoomId(e.target.value)}
+            onKeyUp={handleInputEnter}
+          />
+          <input
+            type="text"
+            className="inputBox"
+            placeholder="Enter Name"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+            onKeyUp={handleInputEnter}
+          />
+          <button onClick={joinRoom} className="btn joinBtn enhancedBtn">
+          Join Now
+          </button>
+          <span className="createInfo">
+            Create your own &nbsp;
+            <button onClick={createNewRoom} className="createNewBtn enhancedBtn smallBtn">
+              ➕ Room Id
+            </button>
+          </span>
+        </div>
+      </div>
+      <footer>
+        <h4>&copy; CodeTogether</h4>
+      </footer>
     </div>
-
-    <div className="createInfo">
-      <p>Create your own</p>
-      <button className="enhancedBtn smallBtn" onClick={createNewRoom}>+ Room Id</button>
-    </div>
-  </div>
-
-  <footer>
-    © CodeTogether
-  </footer>
-</div>
   );
 };
 

@@ -13,27 +13,22 @@
   width: 400px;
   max-width: 90%;
 }
-
 footer {
   position: fixed;
   bottom: 0;
 }
-
 .inputGroup {
   display: flex;
   flex-direction: column;
 }
-
 .mainLabel {
   margin-bottom: 20px;
   margin-top: 0;
 }
-
 .homePageLogo {
   height: 220px;
   margin-bottom: 20px;
 }
-
 .inputBox {
   padding: 10px;
   border-radius: 5px;
@@ -45,7 +40,6 @@ footer {
   font-weight: bold;
   color: #000;
 }
-
 .btn {
   border: none;
   padding: 10px;
@@ -63,100 +57,82 @@ footer {
   color: #fff;
 }
 
-.joinBtn:hover,
-.leaveBtn:hover {
+.joinBtn:hover,.leaveBtn:hover {
   background: #3E8BAA;
 }
 
 .createInfo {
   margin: 0 auto;
   margin-top: 20px;
-  text-align: center;
 }
 
-.enhancedBtn {
-  background-color: #4BA3C7;
-  color: #fff;
-  border: none;
-  border-radius: 8px;
-  padding: 12px 20px;
-  font-size: 16px;
-  font-weight: bold;
-  cursor: pointer;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-  transition: all 0.3s ease;
+.createNewBtn {
+  color: #4BA3C7;
+  text-decoration: none;
+  border-bottom: 1px solid #4BA3C7;
+  transition: all 0.3s ease-in-out;
 }
 
-.enhancedBtn:hover {
-  background-color: #3E8BAA;
-  transform: translateY(-2px);
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.25);
+.createNewBtn:hover {
+  color: #3E8BAA;
+  border-color: #3E8BAA;
 }
 
-.enhancedBtn:active {
-  transform: scale(0.98);
-  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2);
-}
 
-.smallBtn {
-  padding: 6px 12px;
-  font-size: 14px;
-  border-radius: 6px;
-}
-
-.mainWrap {
+.mainWrap{
   display: grid;
   grid-template-columns: 230px 1fr;
+  
 }
 
-.aside {
+.aside{
   background: #B3E5FC;
   padding: 16px;
   color: #fff;
   display: flex;
   flex-direction: column;
 }
-
-.asideInner {
+.asideInner{
   flex: 1;
 }
-
-.clientsList {
+.clientsList{
   display: flex;
   align-items: center;
   flex-wrap: wrap;
   gap: 20px;
+
 }
 
-.client {
+.client{
   display: flex;
   align-items: center;
   flex-direction: column;
   font-weight: bold;
-}
 
-.username {
+}
+.username{
   margin-top: 10px;
 }
 
-.logo {
-  border-bottom: 1px solid #424242;
+.logo{
+  border-bottom:1px solid #424242 ;
   padding-bottom: 10px;
 }
-
-.logoImg {
+.logoImg{
   height: 100px;
+
 }
 
-.leaveBtn {
+.leaveBtn{
   margin-top: 20px;
   background: #4BA3C7;
   width: 100%;
 }
 
-.CodeMirror {
+.CodeMirror{
   min-height: calc(100vh);
   font-size: 20px;
   line-height: 1.6;
   padding-top: 20px;
 }
+
