@@ -13,22 +13,27 @@
   width: 400px;
   max-width: 90%;
 }
+
 footer {
   position: fixed;
   bottom: 0;
 }
+
 .inputGroup {
   display: flex;
   flex-direction: column;
 }
+
 .mainLabel {
   margin-bottom: 20px;
   margin-top: 0;
 }
+
 .homePageLogo {
   height: 220px;
   margin-bottom: 20px;
 }
+
 .inputBox {
   padding: 10px;
   border-radius: 5px;
@@ -40,6 +45,7 @@ footer {
   font-weight: bold;
   color: #000;
 }
+
 .btn {
   border: none;
   padding: 10px;
@@ -57,84 +63,17 @@ footer {
   color: #fff;
 }
 
-.joinBtn:hover,.leaveBtn:hover {
+.joinBtn:hover,
+.leaveBtn:hover {
   background: #3E8BAA;
 }
 
 .createInfo {
   margin: 0 auto;
   margin-top: 20px;
+  text-align: center;
 }
 
-.createNewBtn {
-  color: #4BA3C7;
-  text-decoration: none;
-  border-bottom: 1px solid #4BA3C7;
-  transition: all 0.3s ease-in-out;
-}
-
-.createNewBtn:hover {
-  color: #3E8BAA;
-  border-color: #3E8BAA;
-}
-
-
-.mainWrap{
-  display: grid;
-  grid-template-columns: 230px 1fr;
-  
-}
-
-.aside{
-  background: #B3E5FC;
-  padding: 16px;
-  color: #fff;
-  display: flex;
-  flex-direction: column;
-}
-.asideInner{
-  flex: 1;
-}
-.clientsList{
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 20px;
-
-}
-
-.client{
-  display: flex;
-  align-items: center;
-  flex-direction: column;
-  font-weight: bold;
-
-}
-.username{
-  margin-top: 10px;
-}
-
-.logo{
-  border-bottom:1px solid #424242 ;
-  padding-bottom: 10px;
-}
-.logoImg{
-  height: 100px;
-
-}
-
-.leaveBtn{
-  margin-top: 20px;
-  background: #4BA3C7;
-  width: 100%;
-}
-
-.CodeMirror{
-  min-height: calc(100vh);
-  font-size: 20px;
-  line-height: 1.6;
-  padding-top: 20px;
-}
 .enhancedBtn {
   background-color: #4BA3C7;
   color: #fff;
@@ -163,4 +102,61 @@ footer {
   padding: 6px 12px;
   font-size: 14px;
   border-radius: 6px;
+}
+
+.mainWrap {
+  display: grid;
+  grid-template-columns: 230px 1fr;
+}
+
+.aside {
+  background: #B3E5FC;
+  padding: 16px;
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+}
+
+.asideInner {
+  flex: 1;
+}
+
+.clientsList {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.client {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  font-weight: bold;
+}
+
+.username {
+  margin-top: 10px;
+}
+
+.logo {
+  border-bottom: 1px solid #424242;
+  padding-bottom: 10px;
+}
+
+.logoImg {
+  height: 100px;
+}
+
+.leaveBtn {
+  margin-top: 20px;
+  background: #4BA3C7;
+  width: 100%;
+}
+
+.CodeMirror {
+  min-height: calc(100vh);
+  font-size: 20px;
+  line-height: 1.6;
+  padding-top: 20px;
 }
