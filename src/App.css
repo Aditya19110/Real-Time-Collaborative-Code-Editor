@@ -135,4 +135,23 @@ footer {
   line-height: 1.6;
   padding-top: 20px;
 }
+.CodeMirror-cursor {
+  border-left: 2px solid #4BA3C7 !important;
+}
+.roomBtn {
+  background: #4BA3C7;
+  color: #fff;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+  width: auto;
+  display: inline-block;
+}
 
+.roomBtn:hover {
+  background: #3E8BAA;
+}

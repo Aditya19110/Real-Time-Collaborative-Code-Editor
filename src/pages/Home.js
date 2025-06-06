@@ -58,12 +58,12 @@ const Home = () => {
             onChange={(e) => setUsername(e.target.value)}
             onKeyUp={handleInputEnter}
           />
-          <button onClick={joinRoom} className="btn joinBtn enhancedBtn">
+          <button onClick={joinRoom} className="btn joinBtn">
           Join Now
           </button>
           <span className="createInfo">
             Create your own &nbsp;
-            <button onClick={createNewRoom} className="createNewBtn enhancedBtn joinBtn">
+            <button onClick={createNewRoom} className="createNewBtn roomBtn">
               ➕ Room Id
             </button>
           </span>
