@@ -12,10 +12,11 @@ const path = require('path');
 // Create HTTP server
 const server = http.createServer(app);
 
-// Replace this with your actual Vercel frontend domain
-const FRONTEND_ORIGIN = process.env.FRONTEND_ORIGIN || 'https://real-time-collaborative-code-editor-nine.vercel.app/';
+// ✅ Correct FRONTEND_ORIGIN (NO trailing slash)
+const FRONTEND_ORIGIN =
+  process.env.FRONTEND_ORIGIN || 'https://real-time-collaborative-code-editor-nine.vercel.app';
 
-// Initialize Socket.io server with CORS
+// Initialize Socket.io server with CORS config
 const io = new Server(server, {
   cors: {
     origin: FRONTEND_ORIGIN,
@@ -25,17 +26,19 @@ const io = new Server(server, {
   },
 });
 
-// Express CORS Middleware
-app.use(cors({
-  origin: FRONTEND_ORIGIN,
-  methods: ['GET', 'POST'],
-  allowedHeaders: ['Content-Type'],
-  credentials: true,
-}));
+// Express CORS middleware
+app.use(
+  cors({
+    origin: FRONTEND_ORIGIN,
+    methods: ['GET', 'POST'],
+    allowedHeaders: ['Content-Type'],
+    credentials: true,
+  })
+);
 
 app.use(bodyParser.json());
 
-// Socket mappings
+// Maps to track room-user-code info
 const userSocketMap = {};
 const roomUsernamesMap = {};
 const roomCodeMap = {};
@@ -49,13 +52,12 @@ function getAllConnectedClients(roomId) {
 
 // Socket.io Events
 io.on('connection', (socket) => {
-  console.log('Socket connected', socket.id);
+  console.log('✅ Socket connected:', socket.id);
 
   socket.on(ACTIONS.JOIN, ({ roomId, username }) => {
-    console.log(`Attempting to join room: ${roomId} with username: ${username}`);
+    console.log(`➡️  ${username} joining room ${roomId}`);
 
     if (roomUsernamesMap[roomId]?.includes(username)) {
-      console.log(`${username} is already in the room ${roomId}`);
       socket.emit(ACTIONS.ERROR, { message: `${username} is already in the room` });
       return;
     }
@@ -64,8 +66,6 @@ io.on('connection', (socket) => {
     roomUsernamesMap[roomId] = roomUsernamesMap[roomId] || [];
     roomUsernamesMap[roomId].push(username);
     socket.join(roomId);
-
-    console.log(`User ${username} joined room ${roomId}`);
 
     const clients = getAllConnectedClients(roomId);
 
@@ -81,13 +81,11 @@ io.on('connection', (socket) => {
   });
 
   socket.on(ACTIONS.CODE_CHANGE, ({ roomId, code }) => {
-    console.log(`Code change detected in room ${roomId}`);
     roomCodeMap[roomId] = code;
     socket.in(roomId).emit(ACTIONS.CODE_CHANGE, { code });
   });
 
   socket.on(ACTIONS.SYNC_CODE, ({ socketId, code }) => {
-    console.log(`Syncing code to socket ${socketId}`);
     io.to(socketId).emit(ACTIONS.CODE_CHANGE, { code });
   });
 
@@ -112,7 +110,7 @@ io.on('connection', (socket) => {
   });
 });
 
-// Code execution endpoint
+// Code Execution API
 app.post('/execute', (req, res) => {
   const { code } = req.body;
 
@@ -131,14 +129,11 @@ app.post('/execute', (req, res) => {
   const filePath = path.join(tempDir, fileName);
 
   fs.writeFile(filePath, safeCode, (err) => {
-    if (err) {
-      return res.status(500).json({ error: 'Failed to write code to file' });
-    }
+    if (err) return res.status(500).json({ error: 'Failed to write code to file' });
 
     exec(`python3 "${filePath}"`, (error, stdout, stderr) => {
       if (error || stderr) {
-        res.status(400).json({ error: stderr || error.message });
-        return;
+        return res.status(400).json({ error: stderr || error.message });
       }
 
       res.json({ output: stdout });
@@ -150,8 +145,8 @@ app.post('/execute', (req, res) => {
   });
 });
 
-// Start Server
+// ✅ Start Server (bind to 0.0.0.0 for Render compatibility)
 const PORT = process.env.PORT || 5002;
-server.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+server.listen(PORT, '0.0.0.0', () => {
+  console.log(`🚀 Server running on port ${PORT}`);
 });
