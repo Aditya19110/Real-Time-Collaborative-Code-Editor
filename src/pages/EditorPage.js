@@ -14,7 +14,7 @@ import axios from "axios";
 
 const SERVER_URL = process.env.REACT_APP_BACKEND_URL || 
   (process.env.NODE_ENV === 'production' 
-    ? 'https://code-editor-backend.onrender.com' 
+    ? 'https://code-editor-backend-2h8c.onrender.com' 
     : 'http://localhost:5002');
 
 const EditorPage = () => {
@@ -144,6 +144,7 @@ const EditorPage = () => {
 
     init();
 
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     return () => {
       const pingInterval = pingIntervalRef.current;
       const reconnectTimeout = reconnectTimeoutRef.current;

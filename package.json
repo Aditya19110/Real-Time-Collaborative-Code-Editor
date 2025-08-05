@@ -39,8 +39,7 @@
     "server:prod": "node server.js",
     "dev": "concurrently \"npm run server:dev\" \"npm start\"",
     "lint": "eslint src --ext .js,.jsx --fix",
-    "lint:check": "eslint src --ext .js,.jsx",
-    "vercel-build": "npm run build"
+    "lint:check": "eslint src --ext .js,.jsx"
   },
   "eslintConfig": {
     "extends": [
