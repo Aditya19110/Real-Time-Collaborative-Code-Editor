@@ -27,8 +27,9 @@ This project is designed to be deployed as two separate services:
    - Click "New Project"
    - Import your GitHub repository
    - Vercel will automatically detect it's a React app
-   - Set environment variables:
-     - `REACT_APP_BACKEND_URL`: `https://your-backend-url.onrender.com`
+   - **Important**: In "Environment Variables" section, add:
+     - Key: `REACT_APP_BACKEND_URL`
+     - Value: `https://your-backend-url.onrender.com` (replace with actual backend URL)
    - Click "Deploy"
 
 3. **Configuration**
@@ -37,12 +38,32 @@ This project is designed to be deployed as two separate services:
    - Output directory: `build`
 
 ### Environment Variables for Vercel:
+
+**During Deployment Setup:**
+1. In the Vercel deployment form, scroll down to "Environment Variables"
+2. Add the following variables:
+
 ```
-REACT_APP_BACKEND_URL=https://your-backend-url.onrender.com
-REACT_APP_SOCKET_TIMEOUT=20000
-REACT_APP_RECONNECT_ATTEMPTS=10
-REACT_APP_PING_INTERVAL=25000
+Key: REACT_APP_BACKEND_URL
+Value: https://code-editor-backend-zh8c.onrender.com
 ```
+
+```
+Key: REACT_APP_SOCKET_TIMEOUT  
+Value: 20000
+```
+
+```
+Key: REACT_APP_RECONNECT_ATTEMPTS
+Value: 10
+```
+
+```
+Key: REACT_APP_PING_INTERVAL
+Value: 25000
+```
+
+**Note:** Replace the backend URL with your actual Render backend URL once deployed.
 
 ## 🎯 Render Deployment (Backend)
 
