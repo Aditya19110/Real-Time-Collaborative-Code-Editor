@@ -32,54 +32,77 @@ const EditorPage = () => {
   const pingIntervalRef = useRef(null);
   const reconnectTimeoutRef = useRef(null);
   const isInitializedRef = useRef(false); // Prevent multiple initializations
+  const socketConnectionRef = useRef(null); // Track connection state
 
   useEffect(() => {
+    // Early returns to prevent unnecessary initialization
     if (!location.state?.username) {
       toast.error("Username is required to join the room");
       reactNavigator("/");
       return;
     }
 
-    // Prevent multiple initializations
-    if (isInitializedRef.current) {
+    // Prevent multiple initializations completely
+    if (isInitializedRef.current || socketConnectionRef.current) {
+      console.log("🚫 Socket already initialized, skipping...");
       return;
     }
+    
     isInitializedRef.current = true;
+    socketConnectionRef.current = "initializing";
 
     const username = location.state.username;
 
     const init = async () => {
       try {
+        // Only initialize if we don't already have a socket
+        if (socketRef.current && socketRef.current.connected) {
+          console.log("🔄 Socket already connected, reusing connection");
+          return;
+        }
+
         setConnectionStatus("Connecting...");
         console.log("🔄 Initializing socket connection to:", SERVER_URL);
+        
+        // Disconnect any existing socket first
+        if (socketRef.current) {
+          socketRef.current.disconnect();
+          socketRef.current.removeAllListeners();
+        }
+        
         socketRef.current = initSocket(SERVER_URL);
-
         const socket = socketRef.current;
+        socketConnectionRef.current = "connected";
 
-        socket.on("connect", () => {
+        // Single connect handler
+        socket.once("connect", () => {
+          console.log("✅ Connected to server with ID:", socket.id);
           setIsConnected(true);
           setConnectionStatus("Connected");
           toast.success("Connected to server");
-          console.log("✅ Connected to server with ID:", socket.id);
           
           // Join the room after connection
           console.log("🏠 Joining room:", roomId, "with username:", username);
           socket.emit(ACTIONS.JOIN, { roomId, username });
         });
 
+        // Single disconnect handler
         socket.on("disconnect", (reason) => {
+          console.log("❌ Disconnected:", reason);
           setIsConnected(false);
           setConnectionStatus(`Disconnected: ${reason}`);
-          console.log("❌ Disconnected:", reason);
           toast.error(`Disconnected: ${reason}`);
+          socketConnectionRef.current = "disconnected";
         });
 
+        // Single reconnect handler
         socket.on("reconnect", () => {
+          console.log("🔄 Reconnected, rejoining room");
           setIsConnected(true);
           setConnectionStatus("Reconnected");
           toast.success("Reconnected to server");
-          console.log("🔄 Reconnected, rejoining room");
           socket.emit(ACTIONS.JOIN, { roomId, username });
+          socketConnectionRef.current = "connected";
         });
 
         socket.on("reconnect_attempt", (attemptNumber) => {
@@ -93,6 +116,7 @@ const EditorPage = () => {
         function handleErrors(e) {
           console.error("🚨 Socket connection error:", e.message || e);
           setIsConnected(false);
+          socketConnectionRef.current = "error";
           
           // Handle specific error types
           if (e.message && e.message.includes('parse')) {
@@ -140,19 +164,22 @@ const EditorPage = () => {
           console.log("✅ Pong received from server");
         });
 
-        socket.emit(ACTIONS.JOIN, { roomId, username });
-
-        pingIntervalRef.current = setInterval(() => {
-          if (socket.connected) {
-            socket.emit("ping");
-          }
-        }, 25000);
+        // Start ping interval only once
+        if (!pingIntervalRef.current) {
+          pingIntervalRef.current = setInterval(() => {
+            if (socket.connected) {
+              socket.emit("ping");
+            }
+          }, 25000);
+        }
 
       } catch (error) {
         console.error("Socket initialization failed:", error);
         setIsConnected(false);
         setConnectionStatus("Initialization Failed");
         toast.error("Failed to initialize connection");
+        socketConnectionRef.current = "error";
+        isInitializedRef.current = false; // Allow retry
       }
     };
 
@@ -160,33 +187,32 @@ const EditorPage = () => {
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
     return () => {
-      isInitializedRef.current = false; // Reset initialization flag
-      // Store ref values at cleanup time
-      const pingInterval = pingIntervalRef.current;
-      const reconnectTimeout = reconnectTimeoutRef.current;
+      console.log("🧹 Cleaning up socket connection...");
       
-      if (pingInterval) {
-        clearInterval(pingInterval);
+      // Reset all initialization flags
+      isInitializedRef.current = false;
+      socketConnectionRef.current = null;
+      
+      // Clear intervals and timeouts
+      if (pingIntervalRef.current) {
+        clearInterval(pingIntervalRef.current);
+        pingIntervalRef.current = null;
       }
-      if (reconnectTimeout) {
-        clearTimeout(reconnectTimeout);
+      if (reconnectTimeoutRef.current) {
+        clearTimeout(reconnectTimeoutRef.current);
+        reconnectTimeoutRef.current = null;
       }
+      
+      // Clean up socket
       if (socketRef.current) {
+        console.log("🔌 Disconnecting socket and removing listeners");
+        socketRef.current.removeAllListeners();
         socketRef.current.disconnect();
-        socketRef.current.off(ACTIONS.JOINED);
-        socketRef.current.off(ACTIONS.DISCONNECTED);
-        socketRef.current.off(ACTIONS.CODE_CHANGE);
-        socketRef.current.off(ACTIONS.ERROR);
-        socketRef.current.off("connect");
-        socketRef.current.off("disconnect");
-        socketRef.current.off("reconnect");
-        socketRef.current.off("connect_error");
-        socketRef.current.off("connect_failed");
-        socketRef.current.off("pong");
+        socketRef.current = null;
       }
     };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [roomId]); // Only depend on roomId - username is constant after initial render
+  // eslint-disable-next-line react-hooks/exhaustive-deps  
+  }, []); // Empty dependency array - initialize only once
 
   const copyRoomId = useCallback(async () => {
     try {

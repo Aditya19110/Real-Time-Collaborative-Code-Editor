@@ -5,15 +5,17 @@ export const initSocket = (serverPath) => {
   const options = {
     forceNew: false, // Don't force new connection - reuse existing ones
     reconnection: true,
-    reconnectionAttempts: 5, // Reduced attempts to prevent spam
-    reconnectionDelay: 2000, // Increased delay
-    reconnectionDelayMax: 10000, // Increased max delay
-    timeout: 20000,
+    reconnectionAttempts: 3, // Reduced attempts to prevent spam
+    reconnectionDelay: 3000, // Increased delay
+    reconnectionDelayMax: 15000, // Increased max delay
+    timeout: 30000, // Increased timeout
     transports: ['websocket', 'polling'],
     autoConnect: true,
     pingTimeout: 60000,
     pingInterval: 25000,
     maxHttpBufferSize: 1e6, // 1MB buffer
+    upgrade: true,
+    rememberUpgrade: true,
   };
 
   const backendUrl = serverPath || process.env.REACT_APP_BACKEND_URL || 'http://localhost:5002';

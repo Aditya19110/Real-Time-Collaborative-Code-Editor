@@ -28,9 +28,11 @@ const io = new Server(server, {
   pingInterval: 25000,
   upgradeTimeout: 30000,
   allowUpgrades: true,
+  maxHttpBufferSize: 1e6, // 1MB buffer
+  connectTimeout: 45000,
+  transports: ['websocket', 'polling'],
   cookie: false,
   serveClient: false,
-  transports: ['websocket', 'polling']
 });
 
 app.use(
@@ -45,6 +47,32 @@ app.use(bodyParser.json());
 
 const userSocketMap = {};
 const roomUsernamesMap = {};
+
+// Connection rate limiting
+const connectionTracker = new Map();
+const CONNECTION_RATE_LIMIT = 3; // Max 3 connections per IP per minute
+const RATE_LIMIT_WINDOW = 60000; // 1 minute
+
+function isRateLimited(ip) {
+  const now = Date.now();
+  if (!connectionTracker.has(ip)) {
+    connectionTracker.set(ip, [now]);
+    return false;
+  }
+  
+  const connections = connectionTracker.get(ip);
+  // Remove old connections outside the window
+  const recentConnections = connections.filter(time => now - time < RATE_LIMIT_WINDOW);
+  
+  if (recentConnections.length >= CONNECTION_RATE_LIMIT) {
+    console.log(`🚫 Rate limit exceeded for IP: ${ip}`);
+    return true;
+  }
+  
+  recentConnections.push(now);
+  connectionTracker.set(ip, recentConnections);
+  return false;
+}
 const roomCodeMap = {};
 
 function getAllConnectedClients(roomId) {
@@ -55,11 +83,25 @@ function getAllConnectedClients(roomId) {
 }
 
 io.on('connection', (socket) => {
-  console.log('✅ Socket connected:', socket.id);
+  const clientIP = socket.handshake.address || socket.conn.remoteAddress;
+  
+  // Rate limiting check
+  if (isRateLimited(clientIP)) {
+    console.log(`🚫 Connection rejected due to rate limit: ${socket.id} from ${clientIP}`);
+    socket.emit(ACTIONS.ERROR, { message: 'Too many connection attempts. Please wait a moment.' });
+    socket.disconnect(true);
+    return;
+  }
+  
+  console.log('✅ Socket connected:', socket.id, 'from IP:', clientIP);
 
+  // Track connection time
+  const connectionTime = Date.now();
+  
   socket.on(ACTIONS.JOIN, ({ roomId, username }) => {
     console.log(`➡️  ${username} joining room ${roomId}`);
 
+    // Prevent duplicate usernames in the same room
     if (roomUsernamesMap[roomId]?.includes(username)) {
       socket.emit(ACTIONS.ERROR, { message: `${username} is already in the room` });
       return;
@@ -100,7 +142,10 @@ io.on('connection', (socket) => {
     socket.emit('heartbeat-ack');
   });
 
-  socket.on('disconnect', () => {
+  socket.on('disconnect', (reason) => {
+    const connectionDuration = Date.now() - connectionTime;
+    console.log(`❌ Socket disconnected: ${socket.id}, reason: ${reason}, duration: ${connectionDuration}ms`);
+    
     const rooms = [...socket.rooms];
     rooms.forEach((roomId) => {
       if (roomId !== socket.id) {
