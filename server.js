@@ -9,14 +9,14 @@ const cors = require('cors');
 const fs = require('fs');
 const path = require('path');
 
-// Create HTTP server
 const server = http.createServer(app);
 
-// ✅ FRONTEND ORIGIN (no trailing slash)
 const FRONTEND_ORIGIN =
-  process.env.FRONTEND_ORIGIN || 'https://real-time-collaborative-code-editor-nine.vercel.app';
+  process.env.FRONTEND_ORIGIN || 
+  process.env.NODE_ENV === 'production' 
+    ? 'https://real-time-collaborative-code-editor-nine.vercel.app'
+    : 'http://localhost:3000';
 
-// Initialize Socket.io
 const io = new Server(server, {
   cors: {
     origin: FRONTEND_ORIGIN,
@@ -24,9 +24,15 @@ const io = new Server(server, {
     allowedHeaders: ['Content-Type'],
     credentials: true,
   },
+  pingTimeout: 60000,
+  pingInterval: 25000,
+  upgradeTimeout: 30000,
+  allowUpgrades: true,
+  cookie: false,
+  serveClient: false,
+  transports: ['websocket', 'polling']
 });
 
-// Enable CORS for Express
 app.use(
   cors({
     origin: FRONTEND_ORIGIN,
@@ -37,7 +43,6 @@ app.use(
 );
 app.use(bodyParser.json());
 
-// Room tracking maps
 const userSocketMap = {};
 const roomUsernamesMap = {};
 const roomCodeMap = {};
@@ -49,11 +54,9 @@ function getAllConnectedClients(roomId) {
   }));
 }
 
-// 🧠 Socket.IO Connection
 io.on('connection', (socket) => {
   console.log('✅ Socket connected:', socket.id);
 
-  // ➕ Join Room
   socket.on(ACTIONS.JOIN, ({ roomId, username }) => {
     console.log(`➡️  ${username} joining room ${roomId}`);
 
@@ -69,7 +72,6 @@ io.on('connection', (socket) => {
 
     const clients = getAllConnectedClients(roomId);
 
-    // Sync existing code to new client
     if (roomCodeMap[roomId]) {
       socket.emit(ACTIONS.CODE_CHANGE, { code: roomCodeMap[roomId] });
     }
@@ -81,45 +83,44 @@ io.on('connection', (socket) => {
     });
   });
 
-  // 🔁 Handle code change
   socket.on(ACTIONS.CODE_CHANGE, ({ roomId, code }) => {
     roomCodeMap[roomId] = code;
     socket.in(roomId).emit(ACTIONS.CODE_CHANGE, { code });
   });
 
-  // 🔄 Handle sync request
   socket.on(ACTIONS.SYNC_CODE, ({ socketId, code }) => {
     io.to(socketId).emit(ACTIONS.CODE_CHANGE, { code });
   });
 
-  // ❤️ Ping-Pong heartbeat
   socket.on('ping', () => {
     socket.emit('pong');
   });
 
-  // 🔌 Handle disconnect
-  socket.on('disconnecting', () => {
+  socket.on('heartbeat', () => {
+    socket.emit('heartbeat-ack');
+  });
+
+  socket.on('disconnect', () => {
     const rooms = [...socket.rooms];
-
     rooms.forEach((roomId) => {
-      socket.in(roomId).emit(ACTIONS.DISCONNECTED, {
-        socketId: socket.id,
-        username: userSocketMap[socket.id],
-      });
+      if (roomId !== socket.id) {
+        socket.in(roomId).emit(ACTIONS.DISCONNECTED, {
+          socketId: socket.id,
+          username: userSocketMap[socket.id],
+        });
 
-      if (roomUsernamesMap[roomId]) {
-        roomUsernamesMap[roomId] = roomUsernamesMap[roomId].filter(
-          (u) => u !== userSocketMap[socket.id]
-        );
+        if (roomUsernamesMap[roomId]) {
+          roomUsernamesMap[roomId] = roomUsernamesMap[roomId].filter(
+            (u) => u !== userSocketMap[socket.id]
+          );
+        }
       }
     });
 
     delete userSocketMap[socket.id];
-    socket.leave();
   });
 });
 
-// 🧪 Code Execution Endpoint
 app.post('/execute', (req, res) => {
   const { code } = req.body;
 
@@ -154,7 +155,6 @@ app.post('/execute', (req, res) => {
   });
 });
 
-// ✅ Start server (compatible with Render)
 const PORT = process.env.PORT || 5002;
 server.listen(PORT, '0.0.0.0', () => {
   console.log(`🚀 Server running on port ${PORT}`);

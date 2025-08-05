@@ -1,0 +1,118 @@
+/* Custom CodeMirror theme for better UI */
+.cm-s-modern.CodeMirror {
+  background: #1e1e1e;
+  color: #d4d4d4;
+  border: none;
+  font-family: 'Fira Code', 'Consolas', 'Monaco', 'Menlo', monospace;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.cm-s-modern .CodeMirror-lines {
+  padding: 20px 0;
+}
+
+.cm-s-modern .CodeMirror-line {
+  padding: 0 20px;
+}
+
+.cm-s-modern .CodeMirror-linenumber {
+  color: #858585;
+  background: #1e1e1e;
+  border-right: 1px solid #333;
+  padding-right: 10px;
+}
+
+.cm-s-modern .CodeMirror-gutters {
+  background: #1e1e1e;
+  border-right: 1px solid #333;
+}
+
+.cm-s-modern .CodeMirror-cursor {
+  border-left: 2px solid #667eea !important;
+}
+
+.cm-s-modern .CodeMirror-selected {
+  background: rgba(102, 126, 234, 0.2) !important;
+}
+
+.cm-s-modern .CodeMirror-activeline-background {
+  background: rgba(255, 255, 255, 0.05) !important;
+}
+
+/* Python syntax highlighting */
+.cm-s-modern .cm-keyword {
+  color: #569cd6;
+  font-weight: bold;
+}
+
+.cm-s-modern .cm-string {
+  color: #ce9178;
+}
+
+.cm-s-modern .cm-comment {
+  color: #6a9955;
+  font-style: italic;
+}
+
+.cm-s-modern .cm-number {
+  color: #b5cea8;
+}
+
+.cm-s-modern .cm-operator {
+  color: #d4d4d4;
+}
+
+.cm-s-modern .cm-def {
+  color: #dcdcaa;
+}
+
+.cm-s-modern .cm-variable {
+  color: #9cdcfe;
+}
+
+.cm-s-modern .cm-builtin {
+  color: #4ec9b0;
+}
+
+.cm-s-modern .cm-meta {
+  color: #d7ba7d;
+}
+
+.cm-s-modern .cm-error {
+  background: rgba(255, 0, 0, 0.3);
+  color: #ff0000;
+}
+
+/* Scrollbar styling */
+.cm-s-modern .CodeMirror-scrollbar-filler,
+.cm-s-modern .CodeMirror-gutter-filler {
+  background: #1e1e1e;
+}
+
+.cm-s-modern .CodeMirror-vscrollbar,
+.cm-s-modern .CodeMirror-hscrollbar {
+  background: #1e1e1e;
+}
+
+.cm-s-modern .CodeMirror-vscrollbar::-webkit-scrollbar,
+.cm-s-modern .CodeMirror-hscrollbar::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.cm-s-modern .CodeMirror-vscrollbar::-webkit-scrollbar-track,
+.cm-s-modern .CodeMirror-hscrollbar::-webkit-scrollbar-track {
+  background: #2d2d30;
+}
+
+.cm-s-modern .CodeMirror-vscrollbar::-webkit-scrollbar-thumb,
+.cm-s-modern .CodeMirror-hscrollbar::-webkit-scrollbar-thumb {
+  background: #667eea;
+  border-radius: 4px;
+}
+
+.cm-s-modern .CodeMirror-vscrollbar::-webkit-scrollbar-thumb:hover,
+.cm-s-modern .CodeMirror-hscrollbar::-webkit-scrollbar-thumb:hover {
+  background: #764ba2;
+}

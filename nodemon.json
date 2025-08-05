@@ -1,0 +1,6 @@
+{
+  "watch": ["server.js", "src/Actions.js"],
+  "ignore": ["temp/*", "node_modules/*", "src/components/*", "src/pages/*", "public/*", "build/*"],
+  "ext": "js",
+  "delay": 1000
+}

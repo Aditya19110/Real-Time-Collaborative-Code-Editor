@@ -1,0 +1,311 @@
+/* Theme System */
+
+/* CSS Custom Properties */
+:root {
+  --font-mono: 'Fira Code', 'JetBrains Mono', 'Cascadia Code', 'SF Mono', 'Monaco', 'Inconsolata', 'Roboto Mono', 'Consolas', monospace;
+  --font-sans: 'Inter', 'SF Pro Display', 'Segoe UI', 'Roboto', sans-serif;
+  
+  --space-xs: 4px;
+  --space-sm: 8px;
+  --space-md: 16px;
+  --space-lg: 24px;
+  --space-xl: 32px;
+  --space-2xl: 48px;
+  
+  /* Border Radius */
+  --radius-sm: 6px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 24px;
+  
+  /* Shadows */
+  --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.1);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.15);
+  --shadow-lg: 0 10px 25px rgba(0, 0, 0, 0.2);
+  --shadow-xl: 0 20px 40px rgba(0, 0, 0, 0.25);
+  
+  /* Transitions */
+  --transition-fast: 150ms ease;
+  --transition-normal: 250ms ease;
+  --transition-slow: 400ms ease;
+}
+
+/* Dark Theme */
+[data-theme="dark"] {
+  --bg-primary: #0d1117;
+  --bg-secondary: #161b22;
+  --bg-tertiary: #21262d;
+  --bg-quaternary: #30363d;
+  --bg-accent: #1f2937;
+  --bg-code: #0d1117;
+  
+  --text-primary: #f0f6fc;
+  --text-secondary: #8b949e;
+  --text-tertiary: #6e7681;
+  --text-inverse: #24292f;         /* Text on light backgrounds */
+  
+  /* Accent Colors */
+  --accent-primary: #58a6ff;       /* GitHub Blue */
+  --accent-secondary: #a5a5a5;     /* Neutral accent */
+  --accent-success: #56d364;       /* Green */
+  --accent-warning: #f1e05a;       /* Yellow */
+  --accent-error: #f85149;         /* Red */
+  --accent-info: #79c0ff;          /* Light blue */
+  
+  /* Border Colors */
+  --border-primary: #30363d;       /* Primary borders */
+  --border-secondary: #21262d;     /* Secondary borders */
+  --border-tertiary: #484f58;      /* Hover borders */
+  
+  /* Syntax Highlighting (VS Code Dark+) */
+  --syntax-keyword: #569cd6;       /* Blue */
+  --syntax-string: #ce9178;        /* Orange */
+  --syntax-comment: #6a9955;       /* Green */
+  --syntax-number: #b5cea8;        /* Light green */
+  --syntax-operator: #d4d4d4;      /* Light gray */
+  --syntax-function: #dcdcaa;      /* Yellow */
+  --syntax-variable: #9cdcfe;      /* Light blue */
+  --syntax-builtin: #4ec9b0;       /* Cyan */
+  --syntax-error: #f14c4c;         /* Red */
+  
+  /* Button States */
+  --btn-primary-bg: linear-gradient(135deg, #58a6ff 0%, #1f6feb 100%);
+  --btn-primary-hover: linear-gradient(135deg, #79c0ff 0%, #388bfd 100%);
+  --btn-secondary-bg: rgba(240, 246, 252, 0.1);
+  --btn-secondary-hover: rgba(240, 246, 252, 0.2);
+  --btn-danger-bg: linear-gradient(135deg, #f85149 0%, #d73a49 100%);
+  --btn-success-bg: linear-gradient(135deg, #56d364 0%, #2ea043 100%);
+}
+
+/* =========================================
+   LIGHT THEME (Programmer's Light Mode)
+   ========================================= */
+[data-theme="light"] {
+  /* Background Colors */
+  --bg-primary: #ffffff;           /* Pure white */
+  --bg-secondary: #f6f8fa;         /* GitHub Light Gray */
+  --bg-tertiary: #f1f3f4;          /* Cards, panels */
+  --bg-quaternary: #e1e4e8;        /* Hover states */
+  --bg-accent: #f8f9fa;            /* Special elements */
+  --bg-code: #ffffff;              /* Code editor background */
+  
+  /* Text Colors */
+  --text-primary: #24292f;         /* Main text */
+  --text-secondary: #57606a;       /* Secondary text */
+  --text-tertiary: #8b949e;        /* Muted text */
+  --text-inverse: #ffffff;         /* Text on dark backgrounds */
+  
+  /* Accent Colors */
+  --accent-primary: #0969da;       /* GitHub Blue */
+  --accent-secondary: #656d76;     /* Neutral accent */
+  --accent-success: #1a7f37;       /* Green */
+  --accent-warning: #9a6700;       /* Yellow/Orange */
+  --accent-error: #cf222e;         /* Red */
+  --accent-info: #0969da;          /* Blue */
+  
+  /* Border Colors */
+  --border-primary: #d0d7de;       /* Primary borders */
+  --border-secondary: #e1e4e8;     /* Secondary borders */
+  --border-tertiary: #bdc1c6;      /* Hover borders */
+  
+  /* Syntax Highlighting (VS Code Light+) */
+  --syntax-keyword: #0000ff;       /* Blue */
+  --syntax-string: #a31515;        /* Red */
+  --syntax-comment: #008000;       /* Green */
+  --syntax-number: #098658;        /* Dark green */
+  --syntax-operator: #000000;      /* Black */
+  --syntax-function: #795e26;      /* Brown */
+  --syntax-variable: #001080;      /* Dark blue */
+  --syntax-builtin: #267f99;       /* Teal */
+  --syntax-error: #ff0000;         /* Red */
+  
+  /* Button States */
+  --btn-primary-bg: linear-gradient(135deg, #0969da 0%, #0550ae 100%);
+  --btn-primary-hover: linear-gradient(135deg, #218bff 0%, #0969da 100%);
+  --btn-secondary-bg: rgba(24, 41, 47, 0.05);
+  --btn-secondary-hover: rgba(24, 41, 47, 0.1);
+  --btn-danger-bg: linear-gradient(135deg, #cf222e 0%, #a40e26 100%);
+  --btn-success-bg: linear-gradient(135deg, #1a7f37 0%, #116329 100%);
+}
+
+/* =========================================
+   THEME TRANSITIONS
+   ========================================= */
+* {
+  transition: background-color var(--transition-normal),
+              color var(--transition-normal),
+              border-color var(--transition-normal),
+              box-shadow var(--transition-normal);
+}
+
+/* =========================================
+   GLOBAL THEME STYLES
+   ========================================= */
+body {
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  font-family: var(--font-sans);
+  transition: background-color var(--transition-normal), color var(--transition-normal);
+}
+
+/* Scrollbar Theming */
+::-webkit-scrollbar {
+  width: 12px;
+  height: 12px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-secondary);
+  border-radius: var(--radius-sm);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border-tertiary);
+  border-radius: var(--radius-sm);
+  border: 2px solid var(--bg-secondary);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--accent-secondary);
+}
+
+/* Selection Styling */
+::selection {
+  background: var(--accent-primary);
+  color: var(--text-inverse);
+}
+
+::-moz-selection {
+  background: var(--accent-primary);
+  color: var(--text-inverse);
+}
+
+/* Focus Outline */
+*:focus {
+  outline: 2px solid var(--accent-primary);
+  outline-offset: 2px;
+}
+
+/* =========================================
+   THEME TOGGLE BUTTON
+   ========================================= */
+.theme-toggle {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  background: var(--btn-secondary-bg);
+  border: 1px solid var(--border-primary);
+  border-radius: var(--radius-lg);
+  padding: var(--space-sm) var(--space-md);
+  cursor: pointer;
+  transition: all var(--transition-normal);
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-primary);
+  backdrop-filter: blur(10px);
+}
+
+.theme-toggle:hover {
+  background: var(--btn-secondary-hover);
+  border-color: var(--border-tertiary);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
+}
+
+.theme-toggle-icon {
+  font-size: 16px;
+  transition: transform var(--transition-fast);
+}
+
+.theme-toggle:hover .theme-toggle-icon {
+  transform: scale(1.1);
+}
+
+/* Theme specific icons */
+[data-theme="dark"] .theme-toggle .light-icon {
+  display: none;
+}
+
+[data-theme="light"] .theme-toggle .dark-icon {
+  display: none;
+}
+
+/* =========================================
+   PROGRAMMER STATUS INDICATORS
+   ========================================= */
+.status-indicator {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-xs);
+  padding: var(--space-xs) var(--space-sm);
+  border-radius: var(--radius-sm);
+  font-size: 12px;
+  font-weight: 600;
+  font-family: var(--font-mono);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.status-indicator.connected {
+  background: rgba(86, 211, 100, 0.1);
+  color: var(--accent-success);
+  border: 1px solid rgba(86, 211, 100, 0.2);
+}
+
+.status-indicator.disconnected {
+  background: rgba(248, 81, 73, 0.1);
+  color: var(--accent-error);
+  border: 1px solid rgba(248, 81, 73, 0.2);
+}
+
+.status-indicator.connecting {
+  background: rgba(121, 192, 255, 0.1);
+  color: var(--accent-info);
+  border: 1px solid rgba(121, 192, 255, 0.2);
+}
+
+/* =========================================
+   CODE EDITOR ENHANCEMENTS
+   ========================================= */
+.CodeMirror {
+  background: var(--bg-code) !important;
+  color: var(--text-primary) !important;
+  font-family: var(--font-mono) !important;
+  font-size: 14px !important;
+  line-height: 1.6 !important;
+  border-radius: var(--radius-md);
+}
+
+.CodeMirror-gutters {
+  background: var(--bg-secondary) !important;
+  border-right: 1px solid var(--border-primary) !important;
+}
+
+.CodeMirror-linenumber {
+  color: var(--text-tertiary) !important;
+  font-family: var(--font-mono) !important;
+}
+
+.CodeMirror-cursor {
+  border-left: 2px solid var(--accent-primary) !important;
+}
+
+.CodeMirror-selected {
+  background: rgba(88, 166, 255, 0.15) !important;
+}
+
+.CodeMirror-activeline-background {
+  background: var(--bg-tertiary) !important;
+}
+
+/* Syntax highlighting with CSS variables */
+.cm-keyword { color: var(--syntax-keyword) !important; }
+.cm-string { color: var(--syntax-string) !important; }
+.cm-comment { color: var(--syntax-comment) !important; }
+.cm-number { color: var(--syntax-number) !important; }
+.cm-operator { color: var(--syntax-operator) !important; }
+.cm-def { color: var(--syntax-function) !important; }
+.cm-variable { color: var(--syntax-variable) !important; }
+.cm-builtin { color: var(--syntax-builtin) !important; }
+.cm-error { color: var(--syntax-error) !important; background: rgba(248, 81, 73, 0.1) !important; }
