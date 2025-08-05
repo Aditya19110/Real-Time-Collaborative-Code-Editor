@@ -34,8 +34,9 @@ This project is designed to be deployed as two separate services:
 
 3. **Configuration**
    - Vercel will use the `vercel.json` file automatically
-   - Build command: `npm run build`
+   - Build command: `npm run build` (default for React apps)
    - Output directory: `build`
+   - **Framework Preset**: Vercel should auto-detect "Create React App"
 
 ### Environment Variables for Vercel:
 

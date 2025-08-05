@@ -31,6 +31,7 @@ const EditorPage = () => {
   const [connectionStatus, setConnectionStatus] = useState("Connecting...");
   const pingIntervalRef = useRef(null);
   const reconnectTimeoutRef = useRef(null);
+  const isInitializedRef = useRef(false); // Prevent multiple initializations
 
   useEffect(() => {
     if (!location.state?.username) {
@@ -38,6 +39,12 @@ const EditorPage = () => {
       reactNavigator("/");
       return;
     }
+
+    // Prevent multiple initializations
+    if (isInitializedRef.current) {
+      return;
+    }
+    isInitializedRef.current = true;
 
     const username = location.state.username;
 
@@ -86,8 +93,15 @@ const EditorPage = () => {
         function handleErrors(e) {
           console.error("🚨 Socket connection error:", e.message || e);
           setIsConnected(false);
-          setConnectionStatus(`Connection Failed: ${e.message || 'Unknown error'}`);
-          toast.error("Connection failed, retrying...");
+          
+          // Handle specific error types
+          if (e.message && e.message.includes('parse')) {
+            setConnectionStatus(`Parse Error: Check server configuration`);
+            toast.error("Server configuration error detected");
+          } else {
+            setConnectionStatus(`Connection Failed: ${e.message || 'Unknown error'}`);
+            toast.error("Connection failed, retrying...");
+          }
         }
 
         socket.on(ACTIONS.JOINED, ({ clients, username: joinedUser, socketId }) => {
@@ -146,6 +160,8 @@ const EditorPage = () => {
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
     return () => {
+      isInitializedRef.current = false; // Reset initialization flag
+      // Store ref values at cleanup time
       const pingInterval = pingIntervalRef.current;
       const reconnectTimeout = reconnectTimeoutRef.current;
       
@@ -169,7 +185,8 @@ const EditorPage = () => {
         socketRef.current.off("pong");
       }
     };
-  }, [roomId, location.state?.username, reactNavigator]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [roomId]); // Only depend on roomId - username is constant after initial render
 
   const copyRoomId = useCallback(async () => {
     try {

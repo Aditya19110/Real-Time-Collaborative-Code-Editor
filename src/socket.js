@@ -3,16 +3,17 @@ import { io } from 'socket.io-client';
 
 export const initSocket = (serverPath) => {
   const options = {
-    forceNew: true,
+    forceNew: false, // Don't force new connection - reuse existing ones
     reconnection: true,
-    reconnectionAttempts: 10,
-    reconnectionDelay: 1000,
-    reconnectionDelayMax: 5000,
+    reconnectionAttempts: 5, // Reduced attempts to prevent spam
+    reconnectionDelay: 2000, // Increased delay
+    reconnectionDelayMax: 10000, // Increased max delay
     timeout: 20000,
     transports: ['websocket', 'polling'],
     autoConnect: true,
     pingTimeout: 60000,
     pingInterval: 25000,
+    maxHttpBufferSize: 1e6, // 1MB buffer
   };
 
   const backendUrl = serverPath || process.env.REACT_APP_BACKEND_URL || 'http://localhost:5002';
