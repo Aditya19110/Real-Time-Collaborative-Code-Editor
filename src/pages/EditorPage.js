@@ -31,8 +31,16 @@ const EditorPage = () => {
   const reconnectTimeoutRef = useRef(null);
   const isInitializedRef = useRef(false);
   const socketConnectionRef = useRef(null);
+  const roomIdRef = useRef(roomId);
+  const usernameRef = useRef(location.state?.username);
+  
   useEffect(() => {
-    if (!location.state?.username) {
+    roomIdRef.current = roomId;
+    usernameRef.current = location.state?.username;
+  }, [roomId, location.state?.username]);
+  
+  useEffect(() => {
+    if (!usernameRef.current) {
       toast.error("Username is required to join the room");
       reactNavigator("/");
       return;
@@ -42,7 +50,8 @@ const EditorPage = () => {
     }
     isInitializedRef.current = true;
     socketConnectionRef.current = "initializing";
-    const username = location.state.username;
+    const username = usernameRef.current;
+    const currentRoomId = roomIdRef.current;
     const init = async () => {
       try {
         if (socketRef.current && socketRef.current.connected) {
@@ -60,7 +69,7 @@ const EditorPage = () => {
           setIsConnected(true);
           setConnectionStatus("Connected");
           toast.success("Connected to server");
-          socket.emit(ACTIONS.JOIN, { roomId, username });
+          socket.emit(ACTIONS.JOIN, { roomId: currentRoomId, username });
         });
         socket.on("disconnect", (reason) => {
           setIsConnected(false);
@@ -72,7 +81,7 @@ const EditorPage = () => {
           setIsConnected(true);
           setConnectionStatus("Reconnected");
           toast.success("Reconnected to server");
-          socket.emit(ACTIONS.JOIN, { roomId, username });
+          socket.emit(ACTIONS.JOIN, { roomId: currentRoomId, username });
           socketConnectionRef.current = "connected";
         });
         socket.on("reconnect_attempt", (attemptNumber) => {
@@ -158,7 +167,7 @@ const EditorPage = () => {
         socketRef.current = null;
       }
     };
-  }, [roomId, location.state?.username, reactNavigator]);
+  }, []);
   const copyRoomId = useCallback(async () => {
     try {
       await navigator.clipboard.writeText(roomId);

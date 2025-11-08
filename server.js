@@ -17,9 +17,22 @@ const FRONTEND_ORIGIN =
     ? 'https://code-together-ak.vercel.app'
     : 'http://localhost:3000');
 
+const ALLOWED_ORIGINS = [
+  FRONTEND_ORIGIN,
+  'https://code-together-ak.vercel.app',
+  'http://localhost:3000',
+  'http://localhost:5002'
+];
+
 const io = new Server(server, {
   cors: {
-    origin: FRONTEND_ORIGIN,
+    origin: (origin, callback) => {
+      if (!origin || ALLOWED_ORIGINS.some(allowed => origin.startsWith(allowed))) {
+        callback(null, true);
+      } else {
+        callback(new Error('Not allowed by CORS'));
+      }
+    },
     methods: ['GET', 'POST'],
     allowedHeaders: ['Content-Type'],
     credentials: true,
@@ -37,7 +50,13 @@ const io = new Server(server, {
 
 app.use(
   cors({
-    origin: FRONTEND_ORIGIN,
+    origin: (origin, callback) => {
+      if (!origin || ALLOWED_ORIGINS.some(allowed => origin.startsWith(allowed))) {
+        callback(null, true);
+      } else {
+        callback(new Error('Not allowed by CORS'));
+      }
+    },
     methods: ['GET', 'POST'],
     allowedHeaders: ['Content-Type'],
     credentials: true,
@@ -178,12 +197,12 @@ io.on('connection', (socket) => {
   socket.on('disconnect', (reason) => {
     const connectionDuration = Date.now() - connectionTime;
     const username = userSocketMap[socket.id];
-    console.log(`Socket disconnected: \${socket.id} (\${username}), reason: \${reason}, duration: \${connectionDuration}ms`);
+    console.log(`Socket disconnected: ${socket.id} (${username}), reason: ${reason}, duration: ${connectionDuration}ms`);
     
     const rooms = [...socket.rooms];
     rooms.forEach((roomId) => {
       if (roomId !== socket.id) {
-        socket.in(roomId).emit(ACTIONS.DISCONNECTED, {
+        io.to(roomId).emit(ACTIONS.DISCONNECTED, {
           socketId: socket.id,
           username: userSocketMap[socket.id],
         });
