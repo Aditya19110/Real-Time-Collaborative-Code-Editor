@@ -118,7 +118,7 @@ io.on('connection', (socket) => {
   const clientIP = socket.handshake.address || socket.conn.remoteAddress;
   
   if (isRateLimited(clientIP)) {
-    console.log(`Connection rejected due to rate limit: \${socket.id} from \${clientIP}`);
+    console.log(`Connection rejected due to rate limit: ${socket.id} from ${clientIP}`);
     socket.emit(ACTIONS.ERROR, { message: 'Too many connection attempts. Please wait a moment.' });
     socket.disconnect(true);
     return;
@@ -129,10 +129,10 @@ io.on('connection', (socket) => {
   const connectionTime = Date.now();
   
   socket.on(ACTIONS.JOIN, ({ roomId, username }) => {
-    console.log(`\${username} (\${socket.id}) joining room \${roomId}`);
+    console.log(`${username} (${socket.id}) joining room ${roomId}`);
 
     if (userSocketMap[socket.id]) {
-      console.log(`Socket \${socket.id} already has username: \${userSocketMap[socket.id]}`);
+      console.log(`Socket ${socket.id} already has username: ${userSocketMap[socket.id]}`);
     }
 
     const existingUsersInRoom = roomUsernamesMap[roomId] || [];
@@ -141,9 +141,9 @@ io.on('connection', (socket) => {
     );
 
     if (isDuplicateUsername) {
-      console.log(`Duplicate username rejected: \${username} in room \${roomId}`);
+      console.log(`Duplicate username rejected: ${username} in room ${roomId}`);
       socket.emit(ACTIONS.ERROR, { 
-        message: `Username "\${username}" is already taken in this room. Please choose another.` 
+        message: `Username "${username}" is already taken in this room. Please choose another.` 
       });
       return;
     }
@@ -157,7 +157,7 @@ io.on('connection', (socket) => {
     roomUsernamesMap[roomId].push({ username, socketId: socket.id });
     
     socket.join(roomId);
-    console.log(`\${username} (\${socket.id}) successfully joined room \${roomId}`);
+    console.log(`${username} (${socket.id}) successfully joined room ${roomId}`);
 
     const clients = getAllConnectedClients(roomId);
     console.log(`Clients in room \${roomId}:`, clients.map(c => c.username).join(', '));
