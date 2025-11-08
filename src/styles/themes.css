@@ -32,49 +32,49 @@
 
 /* Dark Theme */
 [data-theme="dark"] {
-  --bg-primary: #0d1117;
-  --bg-secondary: #161b22;
-  --bg-tertiary: #21262d;
-  --bg-quaternary: #30363d;
-  --bg-accent: #1f2937;
+  --bg-primary: #0f1419;
+  --bg-secondary: #1a1f26;
+  --bg-tertiary: #22272e;
+  --bg-quaternary: #2d333b;
+  --bg-accent: #1c2128;
   --bg-code: #0d1117;
   
-  --text-primary: #f0f6fc;
-  --text-secondary: #8b949e;
+  --text-primary: #e6edf3;
+  --text-secondary: #7d8590;
   --text-tertiary: #6e7681;
-  --text-inverse: #24292f;         /* Text on light backgrounds */
+  --text-inverse: #ffffff;
   
   /* Accent Colors */
-  --accent-primary: #58a6ff;       /* GitHub Blue */
-  --accent-secondary: #a5a5a5;     /* Neutral accent */
-  --accent-success: #56d364;       /* Green */
-  --accent-warning: #f1e05a;       /* Yellow */
-  --accent-error: #f85149;         /* Red */
-  --accent-info: #79c0ff;          /* Light blue */
+  --accent-primary: #2f81f7;
+  --accent-secondary: #848d97;
+  --accent-success: #3fb950;
+  --accent-warning: #d29922;
+  --accent-error: #f85149;
+  --accent-info: #58a6ff;
   
   /* Border Colors */
-  --border-primary: #30363d;       /* Primary borders */
-  --border-secondary: #21262d;     /* Secondary borders */
-  --border-tertiary: #484f58;      /* Hover borders */
+  --border-primary: #30363d;
+  --border-secondary: #21262d;
+  --border-tertiary: #484f58;
   
   /* Syntax Highlighting (VS Code Dark+) */
-  --syntax-keyword: #569cd6;       /* Blue */
-  --syntax-string: #ce9178;        /* Orange */
-  --syntax-comment: #6a9955;       /* Green */
-  --syntax-number: #b5cea8;        /* Light green */
-  --syntax-operator: #d4d4d4;      /* Light gray */
-  --syntax-function: #dcdcaa;      /* Yellow */
-  --syntax-variable: #9cdcfe;      /* Light blue */
-  --syntax-builtin: #4ec9b0;       /* Cyan */
-  --syntax-error: #f14c4c;         /* Red */
+  --syntax-keyword: #569cd6;
+  --syntax-string: #ce9178;
+  --syntax-comment: #6a9955;
+  --syntax-number: #b5cea8;
+  --syntax-operator: #d4d4d4;
+  --syntax-function: #dcdcaa;
+  --syntax-variable: #9cdcfe;
+  --syntax-builtin: #4ec9b0;
+  --syntax-error: #f14c4c;
   
   /* Button States */
-  --btn-primary-bg: linear-gradient(135deg, #58a6ff 0%, #1f6feb 100%);
-  --btn-primary-hover: linear-gradient(135deg, #79c0ff 0%, #388bfd 100%);
-  --btn-secondary-bg: rgba(240, 246, 252, 0.1);
-  --btn-secondary-hover: rgba(240, 246, 252, 0.2);
-  --btn-danger-bg: linear-gradient(135deg, #f85149 0%, #d73a49 100%);
-  --btn-success-bg: linear-gradient(135deg, #56d364 0%, #2ea043 100%);
+  --btn-primary-bg: #2f81f7;
+  --btn-primary-hover: #1f6feb;
+  --btn-secondary-bg: rgba(240, 246, 252, 0.08);
+  --btn-secondary-hover: rgba(240, 246, 252, 0.12);
+  --btn-danger-bg: #da3633;
+  --btn-success-bg: #2ea043;
 }
 
 /* =========================================
@@ -82,50 +82,50 @@
    ========================================= */
 [data-theme="light"] {
   /* Background Colors */
-  --bg-primary: #ffffff;           /* Pure white */
-  --bg-secondary: #f6f8fa;         /* GitHub Light Gray */
-  --bg-tertiary: #f1f3f4;          /* Cards, panels */
-  --bg-quaternary: #e1e4e8;        /* Hover states */
-  --bg-accent: #f8f9fa;            /* Special elements */
-  --bg-code: #ffffff;              /* Code editor background */
+  --bg-primary: #ffffff;
+  --bg-secondary: #f6f8fa;
+  --bg-tertiary: #ffffff;
+  --bg-quaternary: #e1e4e8;
+  --bg-accent: #f8f9fa;
+  --bg-code: #ffffff;
   
   /* Text Colors */
-  --text-primary: #24292f;         /* Main text */
-  --text-secondary: #57606a;       /* Secondary text */
-  --text-tertiary: #8b949e;        /* Muted text */
-  --text-inverse: #ffffff;         /* Text on dark backgrounds */
+  --text-primary: #24292f;
+  --text-secondary: #57606a;
+  --text-tertiary: #6e7781;
+  --text-inverse: #ffffff;
   
   /* Accent Colors */
-  --accent-primary: #0969da;       /* GitHub Blue */
-  --accent-secondary: #656d76;     /* Neutral accent */
-  --accent-success: #1a7f37;       /* Green */
-  --accent-warning: #9a6700;       /* Yellow/Orange */
-  --accent-error: #cf222e;         /* Red */
-  --accent-info: #0969da;          /* Blue */
+  --accent-primary: #0969da;
+  --accent-secondary: #656d76;
+  --accent-success: #1a7f37;
+  --accent-warning: #bf8700;
+  --accent-error: #cf222e;
+  --accent-info: #0969da;
   
   /* Border Colors */
-  --border-primary: #d0d7de;       /* Primary borders */
-  --border-secondary: #e1e4e8;     /* Secondary borders */
-  --border-tertiary: #bdc1c6;      /* Hover borders */
+  --border-primary: #d0d7de;
+  --border-secondary: #e1e4e8;
+  --border-tertiary: #bdc1c6;
   
   /* Syntax Highlighting (VS Code Light+) */
-  --syntax-keyword: #0000ff;       /* Blue */
-  --syntax-string: #a31515;        /* Red */
-  --syntax-comment: #008000;       /* Green */
-  --syntax-number: #098658;        /* Dark green */
-  --syntax-operator: #000000;      /* Black */
-  --syntax-function: #795e26;      /* Brown */
-  --syntax-variable: #001080;      /* Dark blue */
-  --syntax-builtin: #267f99;       /* Teal */
-  --syntax-error: #ff0000;         /* Red */
+  --syntax-keyword: #0000ff;
+  --syntax-string: #a31515;
+  --syntax-comment: #008000;
+  --syntax-number: #098658;
+  --syntax-operator: #000000;
+  --syntax-function: #795e26;
+  --syntax-variable: #001080;
+  --syntax-builtin: #267f99;
+  --syntax-error: #ff0000;
   
   /* Button States */
-  --btn-primary-bg: linear-gradient(135deg, #0969da 0%, #0550ae 100%);
-  --btn-primary-hover: linear-gradient(135deg, #218bff 0%, #0969da 100%);
+  --btn-primary-bg: #0969da;
+  --btn-primary-hover: #0860ca;
   --btn-secondary-bg: rgba(24, 41, 47, 0.05);
   --btn-secondary-hover: rgba(24, 41, 47, 0.1);
-  --btn-danger-bg: linear-gradient(135deg, #cf222e 0%, #a40e26 100%);
-  --btn-success-bg: linear-gradient(135deg, #1a7f37 0%, #116329 100%);
+  --btn-danger-bg: #cf222e;
+  --btn-success-bg: #1a7f37;
 }
 
 /* =========================================

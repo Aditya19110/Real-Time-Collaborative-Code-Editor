@@ -33,16 +33,18 @@ const EditorPage = () => {
   const socketConnectionRef = useRef(null);
   const roomIdRef = useRef(roomId);
   const usernameRef = useRef(location.state?.username);
+  const navigatorRef = useRef(reactNavigator);
   
   useEffect(() => {
     roomIdRef.current = roomId;
     usernameRef.current = location.state?.username;
-  }, [roomId, location.state?.username]);
+    navigatorRef.current = reactNavigator;
+  }, [roomId, location.state?.username, reactNavigator]);
   
   useEffect(() => {
     if (!usernameRef.current) {
       toast.error("Username is required to join the room");
-      reactNavigator("/");
+      navigatorRef.current("/");
       return;
     }
     if (isInitializedRef.current || socketConnectionRef.current) {
@@ -167,6 +169,7 @@ const EditorPage = () => {
         socketRef.current = null;
       }
     };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   const copyRoomId = useCallback(async () => {
     try {
