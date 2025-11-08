@@ -160,10 +160,10 @@ io.on('connection', (socket) => {
     console.log(`${username} (${socket.id}) successfully joined room ${roomId}`);
 
     const clients = getAllConnectedClients(roomId);
-    console.log(`Clients in room \${roomId}:`, clients.map(c => c.username).join(', '));
+    console.log(`Clients in room ${roomId}:`, clients.map(c => c.username).join(', '));
 
     if (roomCodeMap[roomId]) {
-      console.log(`Sending existing code to \${username}`);
+      console.log(`Sending existing code to ${username}`);
       socket.emit(ACTIONS.CODE_CHANGE, { code: roomCodeMap[roomId] });
     }
 
@@ -173,13 +173,13 @@ io.on('connection', (socket) => {
       socketId: socket.id,
     });
     
-    console.log(`Broadcasted JOINED event to room \${roomId}`);
+    console.log(`Broadcasted JOINED event to room ${roomId}`);
   });
 
   socket.on(ACTIONS.CODE_CHANGE, ({ roomId, code }) => {
     roomCodeMap[roomId] = code;
     socket.in(roomId).emit(ACTIONS.CODE_CHANGE, { code });
-    console.log(`Code change broadcasted in room \${roomId} (\${code.length} chars)`);
+    console.log(`Code change broadcasted in room ${roomId} (${code.length} chars)`);
   });
 
   socket.on(ACTIONS.SYNC_CODE, ({ socketId, code }) => {
@@ -215,7 +215,7 @@ io.on('connection', (socket) => {
           if (roomUsernamesMap[roomId].length === 0) {
             delete roomUsernamesMap[roomId];
             delete roomCodeMap[roomId];
-            console.log(`Room \${roomId} cleaned up (empty)`);
+            console.log(`Room ${roomId} cleaned up (empty)`);
           }
         }
       }
@@ -235,7 +235,7 @@ app.post('/execute', (req, res) => {
   }
 
   const safeCode = code.replace(/[`\$]/g, '');
-  const fileName = `\${Date.now()}.py`;
+  const fileName = `${Date.now()}.py`;
   const tempDir = path.join(__dirname, 'temp');
 
   if (!fs.existsSync(tempDir)) {
@@ -243,7 +243,7 @@ app.post('/execute', (req, res) => {
   }
 
   const filePath = path.join(tempDir, fileName);
-  console.log(`Writing code to: \${filePath}`);
+  console.log(`Writing code to: ${filePath}`);
 
   fs.writeFile(filePath, safeCode, (err) => {
     if (err) {
@@ -252,9 +252,9 @@ app.post('/execute', (req, res) => {
     }
 
     const pythonCommand = process.platform === 'win32' ? 'python' : 'python3';
-    console.log(`Executing: \${pythonCommand} "\${filePath}"`);
+    console.log(`Executing: ${pythonCommand} "${filePath}"`);
 
-    exec(`\${pythonCommand} "\${filePath}"`, { timeout: 10000 }, (error, stdout, stderr) => {
+    exec(`${pythonCommand} "${filePath}"`, { timeout: 10000 }, (error, stdout, stderr) => {
       fs.unlink(filePath, (unlinkErr) => {
         if (unlinkErr) console.error('Error deleting temp file:', unlinkErr);
       });
