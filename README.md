@@ -1,8 +1,8 @@
-# 🚀 CodeTogether - Real-Time Collaborative Code Editor
+# CodeTogether - Real-Time Collaborative Code Editor
 
 A modern, real-time collaborative code editor built with React and Socket.io. Write Python code together with multiple users in real-time!
 
-## ✨ Features
+## Features
 
 - **Real-time Collaboration**: Multiple users can edit code simultaneously
 - **Live Code Execution**: Run Python code and see output instantly
@@ -13,7 +13,7 @@ A modern, real-time collaborative code editor built with React and Socket.io. Wr
 - **Auto-completion**: Smart code completion and bracket matching
 - **Connection Status**: Real-time connection status indicator
 
-## 🎨 UI/UX Improvements Made
+## UI/UX Improvements Made
 
 ### Home Page
 - Modern gradient background with glassmorphism effects
@@ -41,7 +41,7 @@ A modern, real-time collaborative code editor built with React and Socket.io. Wr
 - Icon integration for better UX
 - Consistent styling across the app
 
-## 🔧 Technical Improvements
+## Technical Improvements
 
 ### Fixed Issues
 1. **Missing Dependencies**: Added `lodash.debounce` package
@@ -60,7 +60,7 @@ A modern, real-time collaborative code editor built with React and Socket.io. Wr
 - Connection status monitoring with heartbeat
 - Enhanced form validation on home page
 
-## 🚀 Getting Started
+## Getting Started
 
 ### Prerequisites
 - Node.js (v14 or higher)
@@ -70,7 +70,7 @@ A modern, real-time collaborative code editor built with React and Socket.io. Wr
 
 1. Clone the repository
 ```bash
-git clone <repository-url>
+git clone https://github.com/Aditya19110/Real-Time-Collaborative-Code-Editor
 cd Real-Time-Collaborative-Code-Editor
 ```
 
@@ -91,7 +91,7 @@ npm run server:dev
 
 The app will be available at `http://localhost:3000`
 
-## 📁 Project Structure
+## Project Structure
 
 ```
 src/
@@ -107,7 +107,7 @@ src/
 └── socket.js              # Socket.io configuration
 ```
 
-## 🎯 Usage
+## Usage
 
 1. **Create a Room**: Click "Create New Room" on the home page
 2. **Join a Room**: Enter a Room ID and your username
@@ -116,7 +116,7 @@ src/
 5. **Run Code**: Click the "Run Code" button to execute Python code
 6. **Save/Load**: Upload files or save your work locally
 
-## 🌟 Key Features in Detail
+## Key Features in Detail
 
 ### Real-time Collaboration
 - Changes are synced instantly across all connected users
@@ -138,7 +138,7 @@ src/
 - Adaptive layout for different screen sizes
 - Touch-friendly controls
 
-## 🔮 Future Enhancements
+## Future Enhancements
 
 - [ ] Multiple programming language support
 - [ ] Collaborative cursor indicators
@@ -148,11 +148,11 @@ src/
 - [ ] Integration with GitHub
 - [ ] Video/Voice chat integration
 
-## 🤝 Contributing
+## Contributing
 
 Contributions are welcome! Please feel free to submit a Pull Request.
 
-## 📄 License
+## License
 
 This project is licensed under the MIT License.
 
