@@ -2,6 +2,7 @@
 
 .homePageWrapper {
   min-height: 100vh;
+  max-height: 100vh;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -11,7 +12,6 @@
   padding: 16px 16px 70px 16px;
   position: relative;
   overflow: hidden;
-  height: 100vh;
 }
 
 .homePageWrapper::-webkit-scrollbar {
