@@ -158,7 +158,7 @@ const EditorPage = () => {
         socketRef.current = null;
       }
     };
-  }, []);
+  }, [roomId, location.state?.username, reactNavigator]);
   const copyRoomId = useCallback(async () => {
     try {
       await navigator.clipboard.writeText(roomId);
