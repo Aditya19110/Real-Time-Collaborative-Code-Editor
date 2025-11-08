@@ -1,6 +1,5 @@
 import React from 'react';
 import Avatar from 'react-avatar';
-
 const Client = ({ username }) => {
   return (
     <div className='client'>
@@ -9,5 +8,4 @@ const Client = ({ username }) => {
     </div>
   );
 }
-
 export default Client;

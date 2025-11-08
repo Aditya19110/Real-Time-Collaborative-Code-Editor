@@ -3,20 +3,17 @@ import { v4 as uuidv4 } from 'uuid';
 import toast from 'react-hot-toast';
 import { useNavigate } from "react-router-dom";
 import ThemeToggle from '../components/ThemeToggle';
-
 const Home = () => {
   const navigate = useNavigate();
   const [roomId, setRoomId] = useState('');
   const [username, setUsername] = useState('');
   const [isJoining, setIsJoining] = useState(false);
-
   const createNewRoom = (e) => {
     e.preventDefault();
     const id = uuidv4();
     setRoomId(id);
     toast.success('New Room Created! Enter your username to join.');
   };
-
   const joinRoom = async () => {
     if (!roomId.trim()) {
       toast.error('Please enter a Room ID');
@@ -34,7 +31,6 @@ const Home = () => {
       toast.error('Username must be less than 20 characters');
       return;
     }
-
     setIsJoining(true);
     try {
       await new Promise(resolve => setTimeout(resolve, 500));
@@ -46,25 +42,21 @@ const Home = () => {
       setIsJoining(false);
     }
   };
-
   const handleInputEnter = (e) => {
     if (e.code === 'Enter') {
       e.preventDefault();
       joinRoom();
     }
   };
-
   const handleRoomIdChange = (e) => {
     setRoomId(e.target.value.trim());
   };
-
   const handleUsernameChange = (e) => {
     const value = e.target.value;
     if (/^[a-zA-Z0-9\s_-]*$/.test(value) || value === '') {
       setUsername(value);
     }
   };
-
   return (
     <div className="homePageWrapper">
       <div className="themeToggleFixed">
@@ -100,8 +92,8 @@ const Home = () => {
             onKeyUp={handleInputEnter}
             maxLength={20}
           />
-          <button 
-            onClick={joinRoom} 
+          <button
+            onClick={joinRoom}
             className="btn joinBtn"
             disabled={isJoining || !roomId.trim() || !username.trim()}
           >
@@ -110,7 +102,7 @@ const Home = () => {
           <span className="createInfo">
             Don't have a room? &nbsp;
             <button onClick={createNewRoom} className="createNewBtn roomBtn">
-              ➕ Create New Room
+               Create New Room
             </button>
           </span>
         </div>
@@ -122,5 +114,4 @@ const Home = () => {
     </div>
   );
 };
-
 export default Home;

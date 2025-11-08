@@ -13,9 +13,9 @@ const server = http.createServer(app);
 
 const FRONTEND_ORIGIN =
   process.env.FRONTEND_ORIGIN || 
-  process.env.NODE_ENV === 'production' 
-    ? 'https://real-time-collaborative-code-editor-nine.vercel.app'
-    : 'http://localhost:3000';
+  (process.env.NODE_ENV === 'production' 
+    ? 'https://code-together-ak.vercel.app'
+    : 'http://localhost:3000');
 
 const io = new Server(server, {
   cors: {
@@ -28,7 +28,7 @@ const io = new Server(server, {
   pingInterval: 25000,
   upgradeTimeout: 30000,
   allowUpgrades: true,
-  maxHttpBufferSize: 1e6, // 1MB buffer
+  maxHttpBufferSize: 1e6,
   connectTimeout: 45000,
   transports: ['websocket', 'polling'],
   cookie: false,
@@ -45,13 +45,27 @@ app.use(
 );
 app.use(bodyParser.json());
 
+app.get('/', (req, res) => {
+  res.json({ 
+    status: 'ok', 
+    message: 'Code Editor Backend is running',
+    frontend: FRONTEND_ORIGIN 
+  });
+});
+
+app.get('/health', (req, res) => {
+  res.json({ 
+    status: 'healthy',
+    timestamp: new Date().toISOString(),
+    environment: process.env.NODE_ENV || 'development'
+  });
+});
+
 const userSocketMap = {};
 const roomUsernamesMap = {};
-
-// Connection rate limiting
 const connectionTracker = new Map();
-const CONNECTION_RATE_LIMIT = 3; // Max 3 connections per IP per minute
-const RATE_LIMIT_WINDOW = 60000; // 1 minute
+const CONNECTION_RATE_LIMIT = 3;
+const RATE_LIMIT_WINDOW = 60000;
 
 function isRateLimited(ip) {
   const now = Date.now();
@@ -61,11 +75,9 @@ function isRateLimited(ip) {
   }
   
   const connections = connectionTracker.get(ip);
-  // Remove old connections outside the window
   const recentConnections = connections.filter(time => now - time < RATE_LIMIT_WINDOW);
   
   if (recentConnections.length >= CONNECTION_RATE_LIMIT) {
-    console.log(`🚫 Rate limit exceeded for IP: ${ip}`);
     return true;
   }
   
@@ -73,6 +85,7 @@ function isRateLimited(ip) {
   connectionTracker.set(ip, recentConnections);
   return false;
 }
+
 const roomCodeMap = {};
 
 function getAllConnectedClients(roomId) {
@@ -85,36 +98,53 @@ function getAllConnectedClients(roomId) {
 io.on('connection', (socket) => {
   const clientIP = socket.handshake.address || socket.conn.remoteAddress;
   
-  // Rate limiting check
   if (isRateLimited(clientIP)) {
-    console.log(`🚫 Connection rejected due to rate limit: ${socket.id} from ${clientIP}`);
+    console.log(`Connection rejected due to rate limit: \${socket.id} from \${clientIP}`);
     socket.emit(ACTIONS.ERROR, { message: 'Too many connection attempts. Please wait a moment.' });
     socket.disconnect(true);
     return;
   }
   
-  console.log('✅ Socket connected:', socket.id, 'from IP:', clientIP);
+  console.log('Socket connected:', socket.id, 'from IP:', clientIP);
 
-  // Track connection time
   const connectionTime = Date.now();
   
   socket.on(ACTIONS.JOIN, ({ roomId, username }) => {
-    console.log(`➡️  ${username} joining room ${roomId}`);
+    console.log(`\${username} (\${socket.id}) joining room \${roomId}`);
 
-    // Prevent duplicate usernames in the same room
-    if (roomUsernamesMap[roomId]?.includes(username)) {
-      socket.emit(ACTIONS.ERROR, { message: `${username} is already in the room` });
+    if (userSocketMap[socket.id]) {
+      console.log(`Socket \${socket.id} already has username: \${userSocketMap[socket.id]}`);
+    }
+
+    const existingUsersInRoom = roomUsernamesMap[roomId] || [];
+    const isDuplicateUsername = existingUsersInRoom.some(
+      (user) => user.username === username && user.socketId !== socket.id
+    );
+
+    if (isDuplicateUsername) {
+      console.log(`Duplicate username rejected: \${username} in room \${roomId}`);
+      socket.emit(ACTIONS.ERROR, { 
+        message: `Username "\${username}" is already taken in this room. Please choose another.` 
+      });
       return;
     }
 
     userSocketMap[socket.id] = username;
-    roomUsernamesMap[roomId] = roomUsernamesMap[roomId] || [];
-    roomUsernamesMap[roomId].push(username);
+    
+    if (!roomUsernamesMap[roomId]) {
+      roomUsernamesMap[roomId] = [];
+    }
+    
+    roomUsernamesMap[roomId].push({ username, socketId: socket.id });
+    
     socket.join(roomId);
+    console.log(`\${username} (\${socket.id}) successfully joined room \${roomId}`);
 
     const clients = getAllConnectedClients(roomId);
+    console.log(`Clients in room \${roomId}:`, clients.map(c => c.username).join(', '));
 
     if (roomCodeMap[roomId]) {
+      console.log(`Sending existing code to \${username}`);
       socket.emit(ACTIONS.CODE_CHANGE, { code: roomCodeMap[roomId] });
     }
 
@@ -123,11 +153,14 @@ io.on('connection', (socket) => {
       username,
       socketId: socket.id,
     });
+    
+    console.log(`Broadcasted JOINED event to room \${roomId}`);
   });
 
   socket.on(ACTIONS.CODE_CHANGE, ({ roomId, code }) => {
     roomCodeMap[roomId] = code;
     socket.in(roomId).emit(ACTIONS.CODE_CHANGE, { code });
+    console.log(`Code change broadcasted in room \${roomId} (\${code.length} chars)`);
   });
 
   socket.on(ACTIONS.SYNC_CODE, ({ socketId, code }) => {
@@ -144,7 +177,8 @@ io.on('connection', (socket) => {
 
   socket.on('disconnect', (reason) => {
     const connectionDuration = Date.now() - connectionTime;
-    console.log(`❌ Socket disconnected: ${socket.id}, reason: ${reason}, duration: ${connectionDuration}ms`);
+    const username = userSocketMap[socket.id];
+    console.log(`Socket disconnected: \${socket.id} (\${username}), reason: \${reason}, duration: \${connectionDuration}ms`);
     
     const rooms = [...socket.rooms];
     rooms.forEach((roomId) => {
@@ -156,8 +190,14 @@ io.on('connection', (socket) => {
 
         if (roomUsernamesMap[roomId]) {
           roomUsernamesMap[roomId] = roomUsernamesMap[roomId].filter(
-            (u) => u !== userSocketMap[socket.id]
+            (user) => user.socketId !== socket.id
           );
+          
+          if (roomUsernamesMap[roomId].length === 0) {
+            delete roomUsernamesMap[roomId];
+            delete roomCodeMap[roomId];
+            console.log(`Room \${roomId} cleaned up (empty)`);
+          }
         }
       }
     });
@@ -167,40 +207,65 @@ io.on('connection', (socket) => {
 });
 
 app.post('/execute', (req, res) => {
+  console.log('Code execution request received');
   const { code } = req.body;
 
   if (typeof code !== 'string' || code.trim() === '') {
+    console.log('Invalid code input');
     return res.status(400).json({ error: 'Invalid code input' });
   }
 
-  const safeCode = code.replace(/[`;$|&{}]/g, '');
-  const fileName = `${Date.now()}.py`;
+  const safeCode = code.replace(/[`\$]/g, '');
+  const fileName = `\${Date.now()}.py`;
   const tempDir = path.join(__dirname, 'temp');
 
   if (!fs.existsSync(tempDir)) {
-    fs.mkdirSync(tempDir);
+    fs.mkdirSync(tempDir, { recursive: true });
   }
 
   const filePath = path.join(tempDir, fileName);
+  console.log(`Writing code to: \${filePath}`);
 
   fs.writeFile(filePath, safeCode, (err) => {
-    if (err) return res.status(500).json({ error: 'Failed to write code to file' });
+    if (err) {
+      console.error('Failed to write file:', err);
+      return res.status(500).json({ error: 'Failed to write code to file' });
+    }
 
-    exec(`python3 "${filePath}"`, (error, stdout, stderr) => {
-      if (error || stderr) {
-        return res.status(400).json({ error: stderr || error.message });
+    const pythonCommand = process.platform === 'win32' ? 'python' : 'python3';
+    console.log(`Executing: \${pythonCommand} "\${filePath}"`);
+
+    exec(`\${pythonCommand} "\${filePath}"`, { timeout: 10000 }, (error, stdout, stderr) => {
+      fs.unlink(filePath, (unlinkErr) => {
+        if (unlinkErr) console.error('Error deleting temp file:', unlinkErr);
+      });
+
+      if (error) {
+        console.error('Execution error:', error.message);
+        if (error.killed || error.signal === 'SIGTERM') {
+          return res.status(400).json({ 
+            error: 'Code execution timed out (max 10 seconds)' 
+          });
+        }
+        return res.status(400).json({ 
+          error: stderr || error.message || 'Code execution failed' 
+        });
       }
 
-      res.json({ output: stdout });
+      if (stderr) {
+        console.log('Stderr:', stderr);
+        if (!stdout) {
+          return res.status(400).json({ error: stderr });
+        }
+      }
 
-      fs.unlink(filePath, (err) => {
-        if (err) console.error('Error deleting temp file:', err);
-      });
+      console.log('Code executed successfully');
+      res.json({ output: stdout || 'Code executed successfully (no output)' });
     });
   });
 });
 
 const PORT = process.env.PORT || 5002;
 server.listen(PORT, '0.0.0.0', () => {
-  console.log(`🚀 Server running on port ${PORT}`);
+  console.log(`Server running on port ${PORT}`);
 });

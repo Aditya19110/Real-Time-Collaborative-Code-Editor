@@ -1,25 +1,18 @@
 import React from 'react';
-
 class ErrorBoundary extends React.Component {
   constructor(props) {
     super(props);
     this.state = { hasError: false, error: null, errorInfo: null };
   }
-
   static getDerivedStateFromError(error) {
     return { hasError: true };
   }
-
   componentDidCatch(error, errorInfo) {
     this.setState({
       error: error,
       errorInfo: errorInfo
     });
-    
-    // Log error to console for debugging
-    console.error('ErrorBoundary caught an error:', error, errorInfo);
   }
-
   render() {
     if (this.state.hasError) {
       return (
@@ -35,7 +28,7 @@ class ErrorBoundary extends React.Component {
           color: 'white'
         }}>
           <h1 style={{ fontSize: '2rem', marginBottom: '1rem' }}>
-            🚨 Oops! Something went wrong
+             Oops! Something went wrong
           </h1>
           <p style={{ fontSize: '1.1rem', marginBottom: '2rem', maxWidth: '600px' }}>
             We encountered an unexpected error. Please refresh the page to try again.
@@ -49,8 +42,8 @@ class ErrorBoundary extends React.Component {
             textAlign: 'left'
           }}>
             <h3>Error Details:</h3>
-            <pre style={{ 
-              fontSize: '0.9rem', 
+            <pre style={{
+              fontSize: '0.9rem',
               overflow: 'auto',
               whiteSpace: 'pre-wrap',
               wordBreak: 'break-word'
@@ -75,7 +68,7 @@ class ErrorBoundary extends React.Component {
               onMouseOver={(e) => e.target.style.background = 'rgba(255, 255, 255, 0.3)'}
               onMouseOut={(e) => e.target.style.background = 'rgba(255, 255, 255, 0.2)'}
             >
-              🔄 Refresh Page
+               Refresh Page
             </button>
             <button
               onClick={() => window.location.href = '/'}
@@ -92,15 +85,13 @@ class ErrorBoundary extends React.Component {
               onMouseOver={(e) => e.target.style.background = 'rgba(255, 255, 255, 0.3)'}
               onMouseOut={(e) => e.target.style.background = 'rgba(255, 255, 255, 0.2)'}
             >
-              🏠 Go Home
+               Go Home
             </button>
           </div>
         </div>
       );
     }
-
     return this.props.children;
   }
 }
-
 export default ErrorBoundary;

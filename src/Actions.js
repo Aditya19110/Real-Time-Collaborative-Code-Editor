@@ -6,5 +6,4 @@ const ACTIONS = {
     SYNC_CODE:'sync_code',
     LEAVE:'leave',
 };
-
 module.exports = ACTIONS;

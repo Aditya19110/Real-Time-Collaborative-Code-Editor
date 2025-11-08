@@ -6,17 +6,16 @@ import EditorPage from './pages/EditorPage';
 import ErrorBoundary from './components/ErrorBoundary';
 import { Toaster } from 'react-hot-toast';
 import { ThemeProvider } from './context/ThemeContext';
-
 function App() {
   const toastOptions = {
     success: {
       style: {
-        background: 'var(--accent-success)',  
-        color: 'var(--text-inverse)',           
+        background: 'var(--accent-success)',
+        color: 'var(--text-inverse)',
       },
       iconTheme: {
-        primary: 'var(--accent-success)',      
-        secondary: 'var(--text-inverse)',      
+        primary: 'var(--accent-success)',
+        secondary: 'var(--text-inverse)',
       },
     },
     error: {
@@ -30,7 +29,6 @@ function App() {
       },
     },
   };
-  
   return (
     <ThemeProvider>
       <ErrorBoundary>
@@ -47,5 +45,4 @@ function App() {
     </ThemeProvider>
   );
 }
-
 export default App;
