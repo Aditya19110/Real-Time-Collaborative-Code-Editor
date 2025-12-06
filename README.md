@@ -1,161 +1,68 @@
-# CodeTogether - Real-Time Collaborative Code Editor
+# echo-code - Real-Time Collaborative Code Editor 
 
-A modern, real-time collaborative code editor built with React and Socket.io. Write Python code together with multiple users in real-time!
+![License](https://img.shields.io/badge/license-MIT-blue.svg)
+![React](https://img.shields.io/badge/React-18-blue)
+![Socket.io](https://img.shields.io/badge/Socket.io-4-black)
+![Tailwind](https://img.shields.io/badge/Tailwind_CSS-3.4-cyan)
+
+**Short GitHub Description:**  
+A real-time collaborative code editor built with React, Socket.io, and Python. Features live code syncing, instant execution, and a modern Tailwind CSS interface.
+
+---
+
+## Overview
+
+**Echo-Code** is a powerful, real-time collaborative code editor that allows developers to write and execute code together instantly. Built with a modern tech stack, it features a stunning glassmorphism UI, robust code synchronization, and server-side Python execution.
 
 ## Features
 
-- **Real-time Collaboration**: Multiple users can edit code simultaneously
-- **Live Code Execution**: Run Python code and see output instantly
-- **Modern UI/UX**: Beautiful, responsive design with gradient backgrounds
-- **File Management**: Upload and save code files
-- **User Management**: See connected users with avatars
-- **Syntax Highlighting**: Python syntax highlighting with custom theme
-- **Auto-completion**: Smart code completion and bracket matching
-- **Connection Status**: Real-time connection status indicator
+- **Real-time Collaboration**: Code synchronizes globally across all users in milliseconds.
+- **Live Code Execution**: Run Python code directly in the browser and see output instantly.
+- **Modern UI/UX**: Designed with **Tailwind CSS**, featuring dark mode, glassmorphism, and responsive layouts.
+- **User Presence**: See who is online with real-time avatar indicators.
+- **File Management**: Upload Python/text files and save your work locally.
+- **Responsive Design**: Fully mobile-optimized coding environment.
+- **Robust Security**: Rate limiting and secure execution environment.
 
-## UI/UX Improvements Made
+## Tech Stack
 
-### Home Page
-- Modern gradient background with glassmorphism effects
-- Improved form validation with real-time feedback
-- Better button states (disabled, loading)
-- Enhanced typography and spacing
-- Responsive design for mobile devices
-
-### Editor Page
-- **Three-panel layout**: Sidebar, Editor, Output panel
-- **Enhanced sidebar**: 
-  - Better organized action buttons with icons
-  - Connection status indicator
-  - Improved user list display
-  - Styled file upload button
-- **Custom code editor theme**: Dark theme with syntax highlighting
-- **Improved output panel**: Clear button, better formatting
-- **Loading states**: Run button shows loading state while executing
-- **Responsive design**: Mobile-friendly layout
-
-### Button Improvements
-- All buttons now have proper hover effects
-- Loading states for async operations
-- Disabled states when appropriate
-- Icon integration for better UX
-- Consistent styling across the app
-
-## Technical Improvements
-
-### Fixed Issues
-1. **Missing Dependencies**: Added `lodash.debounce` package
-2. **Import Errors**: Fixed import statements for debounce function
-3. **ESLint Warnings**: Resolved React hooks dependencies warnings
-4. **Code Cleanup**: Removed unused variables and duplicate keys
-
-### Performance Optimizations
-- Debounced code change events to reduce network traffic
-- Proper cleanup of event listeners
-- Optimized re-renders with proper dependency arrays
-
-### Enhanced Features
-- Better error handling for code execution
-- Improved file upload with file type restrictions
-- Connection status monitoring with heartbeat
-- Enhanced form validation on home page
+- **Frontend**: React.js, Tailwind CSS, CodeMirror, Socket.io Client
+- **Backend**: Node.js, Express, Socket.io, Child Process (for Python execution)
+- **Styling**: Tailwind CSS, PostCSS
+- **Tools**: React Hot Toast (Notifications), React Avatar
 
 ## Getting Started
 
 ### Prerequisites
-- Node.js (v14 or higher)
-- npm or yarn
+
+- [Node.js](https://nodejs.org/) (v16+)
+- [Python 3](https://www.python.org/) (for code execution)
 
 ### Installation
 
-1. Clone the repository
-```bash
-git clone https://github.com/Aditya19110/Real-Time-Collaborative-Code-Editor
-cd Real-Time-Collaborative-Code-Editor
-```
+1.  **Clone the repository**
+    ```bash
+    git clone https://github.com/Aditya19110/Real-Time-Collaborative-Code-Editor.git
+    cd Real-Time-Collaborative-Code-Editor
+    ```
 
-2. Install dependencies
-```bash
-npm install
-```
+2.  **Install Dependencies**
+    ```bash
+    npm install
+    ```
 
-3. Start the development server
-```bash
-npm start
-```
+3.  **Start the Development Server**
+    ```bash
+    npm run dev
+    ```
+    This command will run both the client (http://localhost:3000) and the server (http://localhost:5002) concurrently.
 
-4. Start the backend server (in a separate terminal)
-```bash
-npm run server:dev
-```
-
-The app will be available at `http://localhost:3000`
-
-## Project Structure
-
-```
-src/
-├── components/
-│   ├── Client.js          # User avatar component
-│   ├── Editor.js          # CodeMirror editor wrapper
-│   └── EditorTheme.css    # Custom editor theme
-├── pages/
-│   ├── Home.js            # Landing page
-│   └── EditorPage.js      # Main editor interface
-├── App.js                 # Main app component
-├── App.css                # Global styles
-└── socket.js              # Socket.io configuration
-```
-
-## Usage
-
-1. **Create a Room**: Click "Create New Room" on the home page
-2. **Join a Room**: Enter a Room ID and your username
-3. **Start Coding**: Write Python code in the editor
-4. **Collaborate**: Share the Room ID with others to code together
-5. **Run Code**: Click the "Run Code" button to execute Python code
-6. **Save/Load**: Upload files or save your work locally
-
-## Key Features in Detail
-
-### Real-time Collaboration
-- Changes are synced instantly across all connected users
-- See other users' cursors and selections
-- Live user presence indicators
-
-### Code Execution
-- Server-side Python code execution
-- Real-time output display
-- Error handling and feedback
-
-### File Management
-- Upload Python files, text files, and more
-- Save current code to local file
-- Drag and drop support (coming soon)
-
-### Responsive Design
-- Mobile-friendly interface
-- Adaptive layout for different screen sizes
-- Touch-friendly controls
-
-## Future Enhancements
-
-- [ ] Multiple programming language support
-- [ ] Collaborative cursor indicators
-- [ ] Chat functionality
-- [ ] Code version history
-- [ ] Themes and customization
-- [ ] Integration with GitHub
-- [ ] Video/Voice chat integration
-
-## Contributing
-
-Contributions are welcome! Please feel free to submit a Pull Request.
+    > **Note:** Just `npm start` runs only the React frontend. Ensure the backend is running for socket connections!
 
 ## License
 
-This project is licensed under the MIT License.
+Distributed under the MIT License. See `LICENSE` for more information.
 
 ---
 
-Made with ❤️ by the Aditya Kulkarni
+**Made with ❤️ by Aditya Kulkarni**
